@@ -1,0 +1,4 @@
+Name: Manage recent projects list
+Description: Enables projects to be removed from the recent projects list
+Binding: mrup
+Interactive: TRUE

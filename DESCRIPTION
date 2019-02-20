@@ -1,0 +1,12 @@
+Package: mrup
+Type: Package
+Title: Manage Most Recently Used Project List
+Version: 0.1.0
+Author: John Wilson
+Maintainer: John Wilson <jow2@stir.ac.uk>
+Description: Add-in for managing the recent projects list. Projects on the list
+    can be removed and projects not on the list can be added. Existing projects
+    can also be renamed.
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
