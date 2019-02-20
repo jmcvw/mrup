@@ -7,7 +7,7 @@
 mrup()
 }
 \description{
-An add-in for manageing the RStudio recently used projects list. It allows
+An add-in for managing the RStudio recently used projects list. It allows
 projects to be added to, or removed from the recent project drop-down menu.
 It also makes it possible to rename existing projects without navigating file
 system manually.

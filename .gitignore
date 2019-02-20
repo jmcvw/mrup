@@ -40,3 +40,4 @@ rsconnect/
 *.pptx
 *.html
 alt_mru.R
+.Rproj.user
