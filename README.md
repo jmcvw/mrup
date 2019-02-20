@@ -1,4 +1,5 @@
 # "Addin ~ MRUP"
+
 ## 'An RStudio addin for manipluting the "Most Recently Used Projects" list'
 
 The addin allows projects to be added to, or removed from, the recent project drop-down menu.
@@ -6,6 +7,22 @@ The addin also makes it possible to rename existing projects without navigating 
 
 The RStudio menu shows a list of the 10 most recently used projects.
 This is based on the project_mru file which may contain more than 10 projects (apparently 15 max?).
+
+### Install
+
+To install copy the following:
+
+`remotes::install_github('jmcvw/mrup')`
+
+### Use
+
+Click the `Addins` drop down menu
+
+![][dropdown]
+
+Then locate the `mrup` section and click on the description text below
+
+![][mrupmenu]
 
 ### Remove tab
 
@@ -39,3 +56,5 @@ As long as the project directory has the same name as the project itself, both s
 The name change is implemented immediately on pressing <code style='background-color:#337ab7; color:white'>Rename</code>, with no need to press <code style='background-color:#3cb371; color:white'>Save changes</code>, and without the ability to cancel.
 To undo a rename, the project can be re-renamed straight away.
 
+[dropdown]: images/addins_menu.PNG
+[mrupmenu]: images/mrup_menu.PNG
