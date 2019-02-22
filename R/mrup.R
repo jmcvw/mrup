@@ -61,7 +61,10 @@ mrup <- function() {
     )
   }
 
-  dirRecur <- function(d, ext = '\\.Rproj$', excl = dirname(.libPaths())) {
+  excl_dirs <- dirname(.libPaths())  # so it is done once
+
+  dirRecur <- function(d, ext = '\\.Rproj$',
+                       excl = excl_dirs) {
 
     dirs <- list.dirs(d, full.names = T, recursive = F)
     dirs <- setdiff(dirs, excl)
@@ -73,11 +76,11 @@ mrup <- function() {
       if(!length(dirs) && length(keep)) {
         return(keep)
       } else {
-        keep <- c(keep, sapply(dirs, dirRecur, ext, excl))
+        keep <- c(keep, sapply(dirs, dirRecur, ext, excl),
+                  recursive = TRUE)
       }
     }
 
-    # list(keep, keep2)
     unname(unlist(keep))
   }
 
@@ -148,7 +151,7 @@ mrup <- function() {
                    )
       )
     )
-      )
+  )
 
   # ----------------------------------------------------
 
@@ -160,9 +163,9 @@ mrup <- function() {
       mru_list
     })
 
-    observeEvent(input$help, {
-      # rstudioapi::previewRd(file.path(find.package('mrup'), "man/mrup.Rd"))
-    })
+    # observeEvent(input$help, {
+    #   rstudioapi::previewRd(file.path(find.package('mrup'), "man/mrup.Rd"))
+    # })
 
     # Remove project UI ----
     output$remove_proj_ui <- renderUI({
@@ -189,11 +192,7 @@ mrup <- function() {
     # Read all .Rproj file paths ----
     all_proj <- reactive({
 
-      # all_proj <- dir('~/R', '\\.Rproj$', full.names = TRUE, recursive = TRUE)
-      #
-      # all_proj <- data.frame(
-      #   path = all_proj[!grepl('win-library', all_proj)], stringsAsFactors = FALSE
-      # )  # see issue #14 -- Hopefully dealt with now?
+      # Issue #14 -- Hopefully dealt with now?
 
       all_proj <- data.frame(path = dirRecur('~/R'),
                              stringsAsFactors = FALSE)
@@ -207,8 +206,6 @@ mrup <- function() {
     })
 
     proj_no_mru <- reactive({
-      # the top ten projects already appear on the project list
-      # but more than 10 can be stored in the mru file
       all_proj()[!all_proj()$project %in% names(current_mru()[1:10]), ]
     })
 
@@ -235,8 +232,6 @@ mrup <- function() {
     # Rename project UI ----
     output$rename_proj <- renderUI({
       n <- min(length(current_mru()), 10)
-
-      # Maybe later: add button that gives option of renaming any project
 
       list(
         strong('Rename existing projects'),
@@ -310,7 +305,7 @@ mrup <- function() {
     })
 
     # session$onSessionEnded(function() {
-    # Save project list ~ see issue #13
+    # Save project list ~ see issue #13 - probably not needed any more
     # })
   }
 

@@ -1,8 +1,9 @@
-“Addin ~ MRUP”
-==============
+Addin ~ MRUP
+================
 
-‘An RStudio addin for manipluting the “Most Recently Used Projects” list’
--------------------------------------------------------------------------
+<!-- EDIT IN README.RMD -->
+
+## An RStudio addin for manipluting the “Most Recently Used Projects” list
 
 The addin allows projects to be added to, or removed from, the recent
 project drop-down menu. The addin also makes it possible to rename
@@ -11,6 +12,10 @@ existing projects without navigating file system manually.
 The RStudio menu shows a list of the 10 most recently used projects.
 This is based on the project\_mru file which may contain more than 10
 projects (apparently 15 max?).
+
+**NB:** Only projects saved in subdirectories of the `~/R` directory are
+found. If you prefer to save projects all over your hard disc, this will
+currently not find those projects located elsewhere.
 
 ### Install
 
@@ -39,7 +44,7 @@ Pressing the
 <code style='background-color:#337ab7; color:white'>Remove</code> button
 creates a modified list to replace the current list. Replacement only
 takes place if the
-<code style='background-color:#3cb371; color:white'>Save changes</code>
+<code style='background-color:#3cb371; color:white'>Save changes</code>
 button is pressed. Pressing `Cancel` discards changes and closes the
 app.
 
@@ -55,7 +60,7 @@ Pressing the
 <code style='background-color:#337ab7; color:white'>Add</code> button
 creates a list with all selected projects placed at the top of the
 project list. Additions only occur if the
-<code style='background-color:#3cb371; color:white'>Save changes</code>
+<code style='background-color:#3cb371; color:white'>Save changes</code>
 button is pressed. Since the list can only show 10 projects, those
 further down will be hidden, but will stay on the project\_mru file (for
 a while at least). Pressing `Cancel` discards changes and closes the
@@ -73,6 +78,6 @@ both shall be renamed, and the `.Rproj` extension will remain.
 The name change is implemented immediately on pressing
 <code style='background-color:#337ab7; color:white'>Rename</code>, with
 no need to press
-<code style='background-color:#3cb371; color:white'>Save changes</code>,
+<code style='background-color:#3cb371; color:white'>Save changes</code>,
 and without the ability to cancel. To undo a rename, the project can be
 re-renamed straight away.
