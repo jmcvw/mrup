@@ -1,3 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^alt_mru\.R
+^alt_mru\.R$
+^.*\.Rmd$
+^\.Rprofile$
+R/dirRecur\.R$

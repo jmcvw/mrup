@@ -61,6 +61,26 @@ mrup <- function() {
     )
   }
 
+  dirRecur <- function(d, ext = '\\.Rproj$', excl = dirname(.libPaths())) {
+
+    dirs <- list.dirs(d, full.names = T, recursive = F)
+    dirs <- setdiff(dirs, excl)
+    keep <- dir(d, patt = ext, full.names = TRUE)
+
+    if (!length(dirs) && !length(keep)) {
+      return()
+    } else {
+      if(!length(dirs) && length(keep)) {
+        return(keep)
+      } else {
+        keep <- c(keep, sapply(dirs, dirRecur, ext, excl))
+      }
+    }
+
+    # list(keep, keep2)
+    unname(unlist(keep))
+  }
+
   # Set mru path ----
   # Known possible locations of mru file
   # the 3rd path is required for cases where RStudio is installed on C:\
@@ -169,12 +189,14 @@ mrup <- function() {
     # Read all .Rproj file paths ----
     all_proj <- reactive({
 
-      all_proj <- dir('~/R', '\\.Rproj$', full.names = TRUE, recursive = TRUE)
+      # all_proj <- dir('~/R', '\\.Rproj$', full.names = TRUE, recursive = TRUE)
+      #
+      # all_proj <- data.frame(
+      #   path = all_proj[!grepl('win-library', all_proj)], stringsAsFactors = FALSE
+      # )  # see issue #14 -- Hopefully dealt with now?
 
-      all_proj <- data.frame(
-        path = all_proj[!grepl('win-library', all_proj)], stringsAsFactors = FALSE
-      )  # see issue #14
-
+      all_proj <- data.frame(path = dirRecur('~/R'),
+                             stringsAsFactors = FALSE)
       all_proj[!all_proj$project %in% input$old_name, ]
       all_proj$project <- ProjId(all_proj[[1]], 'proj')
       all_proj$last_modified  <- as.Date(file.info(all_proj[[1]])$mtime)
