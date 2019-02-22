@@ -91,7 +91,8 @@ mrup <- function() {
   mru_path_opts <- c(
     file.path('~/.rstudio-desktop/monitored/lists/project_mru'),
     file.path('~/AppData/Local/RStudio-Desktop/monitored/lists/project_mru'),
-    file.path('C:/Users', Sys.info()['user'], 'AppData/Local/RStudio-Desktop/monitored/lists/project_mru')
+    file.path('C:/Users', Sys.info()['user'], 'AppData/Local/RStudio-Desktop/monitored/lists/project_mru'),
+    file.path('C:/Users', Sys.info()['user'], '.rstudio-desktop/monitored/lists/project_mru')
   )
 
   # choose path

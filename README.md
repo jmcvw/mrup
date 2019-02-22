@@ -48,6 +48,8 @@ takes place if the
 button is pressed. Pressing `Cancel` discards changes and closes the
 app.
 
+![](images/remove_projects.PNG)
+
 ### Add tab
 
 All subdirectories of the `~/R` directory are searched for`.Rproj`
@@ -66,6 +68,8 @@ further down will be hidden, but will stay on the project\_mru file (for
 a while at least). Pressing `Cancel` discards changes and closes the
 app.
 
+![](images/add_projects.PNG)
+
 ### Rename tab
 
 Because searching for all files takes some time, only projects already
@@ -81,3 +85,5 @@ no need to press
 <code style='background-color:#3cb371; color:white'>Save changes</code>,
 and without the ability to cancel. To undo a rename, the project can be
 re-renamed straight away.
+
+![](images/rename_projects.PNG)
