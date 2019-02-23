@@ -66,22 +66,18 @@ mrup <- function() {
   dirRecur <- function(d, ext = '\\.Rproj$',
                        excl = excl_dirs) {
 
-    dirs <- list.dirs(d, full.names = T, recursive = F)
+    dirs <- list.dirs(d, full.names = TRUE, recursive = FALSE)
     dirs <- setdiff(dirs, excl)
     keep <- dir(d, patt = ext, full.names = TRUE)
 
-    if (!length(dirs) && !length(keep)) {
+    if (!length(dirs) && !length(keep))
       return()
-    } else {
-      if(!length(dirs) && length(keep)) {
-        return(keep)
-      } else {
-        keep <- c(keep, sapply(dirs, dirRecur, ext, excl),
-                  recursive = TRUE)
-      }
-    }
 
-    unname(unlist(keep))
+    if(!length(dirs) && length(keep))
+      return(keep)
+
+    c(keep, lapply(dirs, dirRecur, ext, excl), recursive = TRUE)
+
   }
 
   # Set mru path ----
@@ -89,9 +85,9 @@ mrup <- function() {
   # the 3rd path is required for cases where RStudio is installed on C:\
   # and the user home dir is on a different drive - ie my case!
   mru_path_opts <- c(
-    file.path('~/.rstudio-desktop/monitored/lists/project_mru'),
     file.path('~/AppData/Local/RStudio-Desktop/monitored/lists/project_mru'),
     file.path('C:/Users', Sys.info()['user'], 'AppData/Local/RStudio-Desktop/monitored/lists/project_mru'),
+    file.path('~/.rstudio-desktop/monitored/lists/project_mru'),
     file.path('C:/Users', Sys.info()['user'], '.rstudio-desktop/monitored/lists/project_mru')
   )
 
