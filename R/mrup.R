@@ -61,22 +61,27 @@ mrup <- function() {
     )
   }
 
-  excl_dirs <- dirname(.libPaths())  # so it is done once
+  excl_dirs <- paste0(
+    c(dirname(.libPaths()), '\\.git', '\\.Rproj\\.user$'),
+    collapse = '|')
 
-  dirRecur <- function(d, ext = '\\.Rproj$',
+  dirRecur <- function(search.dir, ext = '\\.Rproj$',
                        excl = excl_dirs) {
 
-    dirs <- list.dirs(d, full.names = TRUE, recursive = FALSE)
-    dirs <- setdiff(dirs, excl)
-    keep <- dir(d, patt = ext, full.names = TRUE)
+    dirs <- list.dirs(search.dir, full.names = TRUE, recursive = FALSE)
 
-    if (!length(dirs) && !length(keep))
+    if (!missing(excl))
+      dirs <- dirs[!grepl(excl, dirs)]
+
+    files  <- dir(search.dir, patt = ext, full.names = TRUE)
+
+    if (!length(dirs) && !length(files ))
       return()
 
-    if(!length(dirs) && length(keep))
-      return(keep)
+    if(!length(dirs) && length(files ))
+      return(files )
 
-    c(keep, lapply(dirs, dirRecur, ext, excl), recursive = TRUE)
+    c(files , lapply(dirs, dirRecur, ext, excl), recursive = TRUE)
 
   }
 
@@ -136,7 +141,6 @@ mrup <- function() {
       miniTabPanel("Add project to list", icon = icon('plus-circle'),
                    miniContentPanel(
                      strong('Add projects to recent project list'),
-                     p('Please wait. It might take a few seconds to locate all projects'),
                      uiOutput('add_proj_ui')
                    )
       ),
