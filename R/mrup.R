@@ -62,7 +62,7 @@ mrup <- function() {
   }
 
   excl_dirs <- paste0(
-    c(dirname(.libPaths()), '\\.git', '\\.Rproj\\.user$'),
+    c(dirname(.libPaths()), '\\.git$', '\\.Rproj\\.user$'),
     collapse = '|')
 
   dirRecur <- function(search.dir, ext = '\\.Rproj$',
@@ -137,7 +137,7 @@ mrup <- function() {
       ),
 
       # Remove project TabPanel ----
-      # See issue #11
+      # See issue #11 - maybe no needed anymore?
       miniTabPanel("Add project to list", icon = icon('plus-circle'),
                    miniContentPanel(
                      strong('Add projects to recent project list'),
@@ -164,9 +164,10 @@ mrup <- function() {
       mru_list
     })
 
-    # observeEvent(input$help, {
-    #   rstudioapi::previewRd(file.path(find.package('mrup'), "man/mrup.Rd"))
-    # })
+    observeEvent(input$help, {
+      if ('rstudioapi' %in% installed.packages())
+        rstudioapi::previewRd(file.path(find.package('mrup'), "mrup.Rd"))
+    })
 
     # Remove project UI ----
     output$remove_proj_ui <- renderUI({
@@ -193,7 +194,7 @@ mrup <- function() {
     # Read all .Rproj file paths ----
     all_proj <- reactive({
 
-      # Issue #14 -- Hopefully dealt with now?
+      # Issue #14
 
       all_proj <- data.frame(path = dirRecur('~/R'),
                              stringsAsFactors = FALSE)
@@ -305,9 +306,6 @@ mrup <- function() {
       stopApp()
     })
 
-    # session$onSessionEnded(function() {
-    # Save project list ~ see issue #13 - probably not needed any more
-    # })
   }
 
   # paneViewer allows use of file tab to navigate folders
