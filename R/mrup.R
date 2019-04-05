@@ -202,9 +202,10 @@ mrup <- function() {
       all_proj$project <- ProjId(all_proj[[1]], 'proj')
       all_proj$last_modified  <- as.Date(file.info(all_proj[[1]])$mtime)
       all_proj$days_since_mod <- as.integer(Sys.Date() - all_proj$last_modified)
+      all_proj$last_modified  <- as.character(all_proj$last_modified)
       all_proj <- all_proj[order(all_proj$days_since_mod), ]
 
-      all_proj[c(2, 4, 1)]  # see issue #12
+      all_proj[c(2:4, 1)]
     })
 
     proj_no_mru <- reactive({
@@ -313,4 +314,5 @@ mrup <- function() {
 
   runGadget(ui, server, viewer = viewer)
 
-  }
+}
+
