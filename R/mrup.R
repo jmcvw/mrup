@@ -34,6 +34,10 @@
 #' Since the list can only show 10 projects, those further down will be removed,
 #' but will stay on the project_mru file (for a while at least).
 #'
+#' \emph{NB:} Selecting a directory with no sub-directories or \code{.Rproj}
+#' files currently results in an error. Clicking the refresh button will reset
+#' the app.
+#'
 #' \strong{Rename tab}
 #'
 #' Because searching for all files takes some time, only projects already on the
@@ -95,8 +99,6 @@ mrup <- function() {
     file.path('~/.rstudio-desktop/monitored/lists/project_mru'),
     file.path('C:/Users', Sys.info()['user'], '.rstudio-desktop/monitored/lists/project_mru')
   )
-
-  # search_dir <- '~/R'
 
   # choose path
   if (!any(file.exists(mru_path_opts)))
