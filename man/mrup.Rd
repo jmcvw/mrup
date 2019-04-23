@@ -28,11 +28,11 @@ is pressed.
 \strong{Add tab}
 
 All subdirectories of the \code{~/R} directory are searched for \code{.Rproj}
-files, and will likely take a few seconds to complete. Once done, a list is
-generated that indicates how long it has been since each project was
-modified. Selected projects are shown in a table that also shows the full
-path to the project. Pressing \code{Cancel} closes the app without making any
-changes
+files, and will likely take a few seconds to complete. On Windows systems it
+is possible to specify a different directory. Once done, a list is generated
+that indicates how long it has been since each project was modified. Selected
+projects are shown in a table that also shows the full path to the project.
+Pressing \code{Cancel} closes the app without making any changes
 
 Pressing the \code{Add} button creates a list with all selected projects
 placed at the top of the project list. Replacement only takes place if the

@@ -20,11 +20,11 @@
 #' \strong{Add tab}
 #'
 #' All subdirectories of the \code{~/R} directory are searched for \code{.Rproj}
-#' files, and will likely take a few seconds to complete. Once done, a list is
-#' generated that indicates how long it has been since each project was
-#' modified. Selected projects are shown in a table that also shows the full
-#' path to the project. Pressing \code{Cancel} closes the app without making any
-#' changes
+#' files, and will likely take a few seconds to complete. On Windows systems it
+#' is possible to specify a different directory. Once done, a list is generated
+#' that indicates how long it has been since each project was modified. Selected
+#' projects are shown in a table that also shows the full path to the project.
+#' Pressing \code{Cancel} closes the app without making any changes
 #'
 #' Pressing the \code{Add} button creates a list with all selected projects
 #' placed at the top of the project list. Replacement only takes place if the
@@ -96,6 +96,8 @@ mrup <- function() {
     file.path('C:/Users', Sys.info()['user'], '.rstudio-desktop/monitored/lists/project_mru')
   )
 
+  # search_dir <- '~/R'
+
   # choose path
   if (!any(file.exists(mru_path_opts)))
     stop('File "project_mru" not found')
@@ -136,7 +138,7 @@ mrup <- function() {
                    )
       ),
 
-      # Remove project TabPanel ----
+      # Add project TabPanel ----
       # See issue #11 - maybe no needed anymore?
       miniTabPanel("Add project to list", icon = icon('plus-circle'),
                    miniContentPanel(
@@ -162,6 +164,10 @@ mrup <- function() {
       mru_list <- readLines(mru_path)
       names(mru_list) <- ProjId(mru_list)
       mru_list
+    })
+
+    search_dir <- reactiveVal({
+        search_dir <- '~/R'
     })
 
     observeEvent(input$help, {
@@ -196,7 +202,7 @@ mrup <- function() {
 
       # Issue #14
 
-      all_proj <- data.frame(path = dirRecur('~/R'),
+      all_proj <- data.frame(path = dirRecur(search_dir()),
                              stringsAsFactors = FALSE)
       all_proj[!all_proj$project %in% input$old_name, ]
       all_proj$project <- ProjId(all_proj[[1]], 'proj')
@@ -217,6 +223,12 @@ mrup <- function() {
       list(
         p('Projects are listed in order of days since their last modification.'),
         p('Additions are placed at the top of the recent projects list.'),
+
+        p('By default the ', code('~/R'), ' driectory is searched.'),
+
+        if (Sys.info()['sysname'] == 'Windows')
+          p('Click ', actionLink('choose_dir', 'here'),
+            ' to choose a different directory.'),
 
         selectInput(
           'proj_add_names', 'Projects',
@@ -275,7 +287,12 @@ mrup <- function() {
     observeEvent(input$add_btn, {
       temp_mru <- ProjId(add_choices()$path, 'full')
       names(temp_mru) <- ProjId(temp_mru, 'proj')
-      current_mru({c(temp_mru, current_mru())})
+      current_mru({ c(temp_mru, current_mru()) })
+    })
+
+    # Change search dir ----
+    observeEvent(input$choose_dir, {
+      search_dir({ choose.dir('~/R') })
     })
 
     observeEvent(input$rename_btn, {
@@ -314,4 +331,5 @@ mrup <- function() {
 
   runGadget(ui, server, viewer = viewer)
 
-  }
+}
+
