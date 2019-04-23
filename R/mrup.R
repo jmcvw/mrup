@@ -5,51 +5,76 @@
 #' It also makes it possible to rename existing projects without navigating file
 #' system manually.
 #'
-#' \strong{Remove tab}
+#' The three functions of the app are each accessed through a dedicated tab at
+#' the bottom of the window.
 #'
-#' The RStudio menu shows a list of the 10 most recently used projects. This is
-#' based on the project_mru file which may contain more than 10 projects
-#' (apparently 15 max?). The remove tab lists the entire contents of the
-#' project_mru file, and allows any of them to be removed. The benefit of this
-#' is that is is possible to see which projects were recently removed.
+#' @section Remove tab:
 #'
-#' Pressing the \code{Remove} button creates a modified list to replace the
-#' current list. Replacement only takes place if the \code{Save changes} button
-#' is pressed.
+#'   The RStudio menu shows a list of the 10 most recently used projects. This
+#'   is based on the project_mru file which may contain more than 10 projects
+#'   (apparently 15 max?). The remove tab lists the entire contents of the
+#'   project_mru file, and allows any of them to be removed. The benefit of this
+#'   is that is is possible to see which projects were recently removed.
 #'
-#' \strong{Add tab}
+#'   Pressing the \code{Remove} button creates a modified list to replace the
+#'   current list. Replacement only takes place if the \code{Save changes}
+#'   button is pressed.
 #'
-#' All subdirectories of the \code{~/R} directory are searched for \code{.Rproj}
-#' files, and will likely take a few seconds to complete. On Windows systems it
-#' is possible to specify a different directory. Once done, a list is generated
-#' that indicates how long it has been since each project was modified. Selected
-#' projects are shown in a table that also shows the full path to the project.
-#' Pressing \code{Cancel} closes the app without making any changes
+#' @section Add tab:
 #'
-#' Pressing the \code{Add} button creates a list with all selected projects
-#' placed at the top of the project list. Replacement only takes place if the
-#' \code{Save changes} button is pressed. Pressing \code{Cancel} closes the app
-#' without making any changes
+#'   All subdirectories of the \code{~/R} directory are searched for
+#'   \code{.Rproj} files, and will likely take a few seconds to complete. On
+#'   Windows systems it is possible to specify a different directory (but see
+#'   note below).
 #'
-#' Since the list can only show 10 projects, those further down will be removed,
-#' but will stay on the project_mru file (for a while at least).
+#'   Once done, a list is generated that indicates how long it has been since
+#'   each project was modified. Selected projects are shown in a table that also
+#'   shows the full path to the project. Pressing \code{Cancel} closes the app
+#'   without making any changes
 #'
-#' \emph{NB:} Selecting a directory with no sub-directories or \code{.Rproj}
-#' files currently results in an error. Clicking the refresh button will reset
-#' the app.
+#'   Pressing the \code{Add} button creates a list with all selected projects
+#'   placed at the top of the project list. Replacement only takes place if the
+#'   \code{Save changes} button is pressed. Pressing \code{Cancel} closes the
+#'   app without making any changes
 #'
-#' \strong{Rename tab}
+#'   Since the list can only show 10 projects, those further down will be
+#'   removed, but will stay on the project_mru file (for a while at least).
 #'
-#' Because searching for all files takes some time, only projects already on the
-#' list can be renamed. Using the refresh button allows the list to be updated
-#' without restarting the add-in. When renaming, select 1 project and enter the
-#' new name in the box, without a file extension. As long as the project
-#' directory has the same name as the project itself, both shall be renamed, and
-#' the \code{.Rproj} extension will remain.
+#'   \strong{NB:} Four points to be aware of when selecting a different directory to search.
 #'
-#' The name change is implemented immediately on pressing \code{Rename}, with no
-#' need to press \code{Save changes}, and without the ability to cancel. To undo
-#' a rename, the project can be re-renamed straight away.
+#'   \enumerate{
+#'     \item{It may take several seconds to locate all project files (even in the default location).}
+#'     \item{Sometimes the "Choose directory" dialogue windows opens behind the RStudio window.}
+#'     \item{Pressing the link more than once will cause several "Choose dir" windows to open.}
+#'       \item{Pressing cancel on the choose directory
+#'   dialogue window currently triggers an error.
+#'       \itemize{
+#'         \item{It can can be dealt with by refreshing the app (the refresh button at top right).}
+#'     }
+#'   }
+#'}
+#'
+#' @section Rename tab:
+#'
+#'   Because searching for all files takes some time, only projects already on
+#'   the list can be renamed. Using the refresh button allows the list to be
+#'   updated without restarting the add-in. When renaming, select 1 project and
+#'   enter the new name in the box, without a file extension. As long as the
+#'   project directory has the same name as the project itself, both shall be
+#'   renamed, and the \code{.Rproj} extension will remain.
+#'
+#'   The name change is implemented immediately on pressing \code{Rename}, with
+#'   no need to press \code{Save changes}, and without the ability to cancel. To
+#'   undo a rename, the project can be re-renamed straight away.
+#'
+#'   There may be instances where the project has a name that is different from
+#'   the containing directory. In this case only the \code{.Rproj} file (and
+#'   therefore the preject itself) is renamed. If it is desired that the names
+#'   be made the same, changing the \code{.Rproj} first to match the directory,
+#'   then renaming again to the desired name will result in both the directory
+#'   and project aquiring the new name.
+#'
+#' @details
 #'
 mrup <- function() {
 
@@ -206,14 +231,18 @@ mrup <- function() {
 
       all_proj <- data.frame(path = dirRecur(search_dir()),
                              stringsAsFactors = FALSE)
+
+      if (!nrow(all_proj)) return(NULL)
+
       all_proj[!all_proj$project %in% input$old_name, ]
       all_proj$project <- ProjId(all_proj[[1]], 'proj')
       all_proj$last_modified  <- as.Date(file.info(all_proj[[1]])$mtime)
       all_proj$days_since_mod <- as.integer(Sys.Date() - all_proj$last_modified)
-      all_proj$last_modified  <- as.character(all_proj$last_modified)
+      all_proj$last_modified  <- format(all_proj$last_modified, '%b %Y')
       all_proj <- all_proj[order(all_proj$days_since_mod), ]
 
       all_proj[c(2:4, 1)]
+
     })
 
     proj_no_mru <- reactive({
