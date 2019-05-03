@@ -251,7 +251,7 @@ mrup <- function() {
 
         p('By default the ', code('~/R'), ' directory is searched.'),
 
-        if (Sys.info()['sysname'] == 'Windows')
+        if (tolower(.Platform$OS.type) == 'windows')
           p('Click ', actionLink('choose_dir', 'here'),
             ' to choose a different directory.'),
 
