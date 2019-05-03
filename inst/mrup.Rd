@@ -51,21 +51,13 @@ the bottom of the window.
   Since the list can only show 10 projects, those further down will be
   removed, but will stay on the project_mru file (for a while at least).
 
-  \strong{NB:} Four points to be aware of when selecting a different directory to search.
+  \strong{NB:} Three points to be aware of when selecting a different directory to search.
 
   \enumerate{
     \item{It may take several seconds to locate all project files (even in the default location).}
     \item{Sometimes the "Choose directory" dialogue windows opens behind the RStudio window.}
     \item{Pressing the link more than once will cause several "Choose dir" windows to open.}
-    \item{Currently an error is triggered under the following
-  situations:}
-    \itemize{
-      \item{Selecting a directory without either at least one sub-directory or a \code{.Rproj} files.}
-      \item{Pressing cancel on the choose directory
-  dialogue.}
-      \item{These errors can be dealt with by refreshing the app (the refresh button at top right).}
-    }
-  }
+   }
 }
 
 \section{Rename tab}{
