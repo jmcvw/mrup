@@ -13,9 +13,9 @@ The RStudio menu shows a list of the 10 most recently used projects.
 This is based on the project\_mru file which may contain more than 10
 projects (apparently 15 max?).
 
-**NB:** Only projects saved in subdirectories of the `~/R` directory are
-found. If you prefer to save projects all over your hard disc, this will
-currently not find those projects located elsewhere.
+**NB:** By default, only projects saved in subdirectories of the `~/R` directory are
+found. It is possible to change which directory is searched on Windows machines only, so if you have a non-Windows machine and prefer to save projects all over your hard disc, this will
+currently not find projects located elsewhere.
 
 ### Install
 
