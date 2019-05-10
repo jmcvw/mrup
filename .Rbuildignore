@@ -1,3 +1,4 @@
+^tmp_*\.R$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^alt_mru\.R$
