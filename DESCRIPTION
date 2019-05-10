@@ -9,4 +9,8 @@ Description: Add-in for managing the recent projects list. Projects on the list
     can also be renamed.
 Encoding: UTF-8
 LazyData: true
+Imports:
+    shiny,
+    miniUI,
+    shinyfiles
 RoxygenNote: 6.1.1
