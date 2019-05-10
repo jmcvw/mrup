@@ -128,8 +128,11 @@ mrup <- function() {
 
   mru_path <- mru_path_opts[file.exists(mru_path_opts)]
 
-  drive_names <- setNames(paste0(LETTERS, ':/'), paste0(LETTERS, ':/'))
-  drive_names <- drive_names[dir.exists(drive_names)]
+  root_dirs <- c(`~/R` = normalizePath('~/R'),
+                 Home = normalizePath('~'),
+                 getVolumes()())
+  root_dirs <- root_dirs[dir.exists(root_dirs)]
+
 
   # --------------------------------------------------
 
@@ -197,11 +200,11 @@ mrup <- function() {
     shinyDirChoose(
       input,
       'dir',
-      roots = c(home = normalizePath('~')),
+      roots = root_dirs,
       filetypes = c('', 'Rproj', 'Rmd', 'R')
     )
 
-    search_dir <- reactiveValues(path = '~/R')
+    search_dir <- reactiveValues(path = root_dirs[1])
 
     dir <- reactive(input$dir)
 
@@ -216,7 +219,7 @@ mrup <- function() {
                  handlerExpr = {
                    if (!'path' %in% names(dir())) return()
 
-                   home <- '~'
+                   home <- root_dirs['Home']
 
                    search_dir$path <-
                      file.path(home, paste(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
@@ -287,7 +290,7 @@ mrup <- function() {
         p('Additions are placed at the top of the recent projects list.'),
 
         strong('Current search directory. '),
-        shinyDirLink('dir', '(Change?.)', 'Browse...'),
+        shinyDirLink('dir', '(Change?)', 'Browse...'),
         verbatimTextOutput('dir'),
 
         selectInput(
