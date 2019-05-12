@@ -128,11 +128,11 @@ mrup <- function() {
 
   mru_path <- mru_path_opts[file.exists(mru_path_opts)]
 
-  root_dirs <- c(`~/R` = normalizePath('~/R'),
-                 Home = normalizePath('~'),
-                 getVolumes()())
-  root_dirs <- root_dirs[dir.exists(root_dirs)]
-
+  root_dirs <- c(`~/R` = '~/R',
+                 Home  = '~',
+                 getVolumes()())[c(1:2, 4)]
+  root_dirs <- normalizePath(root_dirs[dir.exists(root_dirs)], .Platform$file.sep)
+  root_dirs <- setNames(root_dirs, basename(root_dirs))
 
   # --------------------------------------------------
 
@@ -219,10 +219,11 @@ mrup <- function() {
                  handlerExpr = {
                    if (!'path' %in% names(dir())) return()
 
-                   home <- root_dirs['Home']
+
+                   root <- root_dirs[dir()$root]
 
                    search_dir$path <-
-                     file.path(home, paste(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
+                     normalizePath(file.path(root, paste0(unlist(dir()$path[-1]), collapse = .Platform$file.sep)))
                  }
     )
 
@@ -279,7 +280,10 @@ mrup <- function() {
     })
 
     proj_no_mru <- reactive({
-      all_proj()[!all_proj()$project %in% names(current_mru()[1:10]), ]
+      # ie all projects not already on the current mru list
+      # this could be conoslidated elsewhere
+      # all_proj()[!all_proj()$project %in% names(current_mru()[1:10]), ]
+      all_proj()[-(1:10), ]
     })
 
     #### ---------- ADD-PROJECT UI ---------- ####
