@@ -1,4 +1,6 @@
-^tmp_*\.R$
+^tmp_dirrecur_reprex\.R$
+^tmp_tmp_reprex\.R$
+^tmp_reprex_helpers\.R$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^alt_mru\.R$

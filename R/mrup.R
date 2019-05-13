@@ -128,11 +128,11 @@ mrup <- function() {
 
   mru_path <- mru_path_opts[file.exists(mru_path_opts)]
 
-  root_dirs <- c(`~/R` = '~/R',
-                 Home  = '~',
-                 getVolumes()())[c(1:2, 4)]
-  root_dirs <- normalizePath(root_dirs[dir.exists(root_dirs)], .Platform$file.sep)
-  root_dirs <- setNames(root_dirs, basename(root_dirs))
+  root_dirs <- c(`Git repos` = normalizePath('~/R/ProjectDir/git_repos', .Platform$file.sep),
+                 `~/R` = normalizePath('~/R', .Platform$file.sep),
+                 Home  = normalizePath('~', .Platform$file.sep),
+                 getVolumes()())
+  root_dirs <- root_dirs[dir.exists(root_dirs)]
 
   # --------------------------------------------------
 
@@ -279,17 +279,19 @@ mrup <- function() {
 
     })
 
-    proj_no_mru <- reactive({
-      # ie all projects not already on the current mru list
-      # this could be conoslidated elsewhere
-      # all_proj()[!all_proj()$project %in% names(current_mru()[1:10]), ]
-      all_proj()[-(1:10), ]
-    })
-
     #### ---------- ADD-PROJECT UI ---------- ####
+
+    proj_no_mru <- reactive({
+      # could be conoslidated
+      x <- all_proj()[!all_proj()$project %in% names(current_mru()[1:10]), ]
+
+      paste0(x[['project']], ' (', x[['days_since_mod']], ' days)')
+
+      })
 
     output$add_proj_ui <- renderUI({
       list(
+
         p('Projects are listed in order of days since their last modification.'),
         p('Additions are placed at the top of the recent projects list.'),
 
@@ -300,7 +302,7 @@ mrup <- function() {
         selectInput(
           'proj_add_names', 'Projects',
 
-          choices = c('Choose...' = '', paste0(proj_no_mru()[['project']], ' (', proj_no_mru()[['days_since_mod']], ' days)')),
+          choices = c('Choose...' = '', proj_no_mru()),
           selectize = TRUE,
           multiple = TRUE,
           width = '100%'),
