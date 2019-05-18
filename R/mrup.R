@@ -112,9 +112,6 @@ mrup <- function() {
 
   #### ---------- SET MRU PATH ---------- ####
   # Known possible locations of mru file
-  # the 3rd path is required for cases where RStudio is installed on C:\
-  # and the user home dir is on a different drive - ie my case!
-
   mru_path_opts <- c(
     file.path('~/AppData/Local/RStudio-Desktop/monitored/lists/project_mru'),
     file.path('C:/Users', Sys.info()['user'], 'AppData/Local/RStudio-Desktop/monitored/lists/project_mru'),
@@ -122,11 +119,11 @@ mrup <- function() {
     file.path('C:/Users', Sys.info()['user'], '.rstudio-desktop/monitored/lists/project_mru')
   )
 
-  # choose path
-  if (!any(file.exists(mru_path_opts)))
-    stop('File "project_mru" not found')
-
   mru_path <- mru_path_opts[file.exists(mru_path_opts)]
+
+  # choose path
+  if (!length(mru_path_opts))
+    stop('File "project_mru" not found')
 
   root_dirs <- c(`Git repos` = normalizePath('~/R/ProjectDir/git_repos', .Platform$file.sep),
                  `~/R` = normalizePath('~/R', .Platform$file.sep),
@@ -195,42 +192,10 @@ mrup <- function() {
       mru_list
     })
 
-    #### ---------- CHOOSE SEARCH DIR ---------- ####
-
-    shinyDirChoose(
-      input,
-      'dir',
-      roots = root_dirs,
-      filetypes = c('', 'Rproj', 'Rmd', 'R')
-    )
-
-    search_dir <- reactiveValues(path = root_dirs[1])
-
-    dir <- reactive(input$dir)
-
-    output$dir <- renderText({
-      search_dir$path
-    })
-
-    observeEvent(ignoreNULL = TRUE,
-                 eventExpr = {
-                   input$dir
-                 },
-                 handlerExpr = {
-                   if (!'path' %in% names(dir())) return()
-
-
-                   root <- root_dirs[dir()$root]
-
-                   search_dir$path <-
-                     normalizePath(file.path(root, paste0(unlist(dir()$path[-1]), collapse = .Platform$file.sep)))
-                 }
-    )
-
     #--------------------------------------------------#
 
     observeEvent(input$help, {
-      if ('rstudioapi' %in% installed.packages())
+      if (length(find.package('rstudioapi', quiet = T)))
         rstudioapi::previewRd(file.path(find.package('mrup'), 'mrup.Rd'))
     })
 
@@ -255,28 +220,6 @@ mrup <- function() {
 
         actionButton('remove_btn', 'Remove', class = 'mru_btn')
       )
-    })
-
-    #### ---------- SEARCH DIR FOR .RPROJ FILES ---------- ####
-
-    all_proj <- reactive({
-
-      # Issue #14
-
-      all_proj <- data.frame(path = dirRecur(search_dir$path),
-                             stringsAsFactors = FALSE)
-
-      if (!nrow(all_proj)) return(NULL)
-
-      all_proj[!all_proj$project %in% input$old_name, ]
-      all_proj$project <- ProjId(all_proj[[1]], 'proj')
-      all_proj$last_modified  <- as.Date(file.info(all_proj[[1]])$mtime)
-      all_proj$days_since_mod <- as.integer(Sys.Date() - all_proj$last_modified)
-      all_proj$last_modified  <- format(all_proj$last_modified, '%b %Y')
-      all_proj <- all_proj[order(all_proj$days_since_mod), ]
-
-      all_proj[c(2:4, 1)]
-
     })
 
     #### ---------- ADD-PROJECT UI ---------- ####
@@ -313,8 +256,6 @@ mrup <- function() {
       )
     })
 
-    # --------------------------------------------------
-
     #### ---------- RENAME-PROJECT UI ---------- ####
 
     output$rename_proj <- renderUI({
@@ -335,6 +276,61 @@ mrup <- function() {
         actionButton('rename_btn', 'Rename', class = 'mru_btn'),
         em('Takes place immediately, without pressing save.')
       )
+    })
+
+
+    #### ---------- CHOOSE SEARCH DIR ---------- ####
+
+    shinyDirChoose(
+      input,
+      'dir',
+      roots = root_dirs,
+      filetypes = c('Rproj', 'Rmd', 'R')
+    )
+
+    search_dir <- reactiveValues(path = root_dirs[1])
+
+    dir <- reactive(input$dir)
+
+    output$dir <- renderText({
+      search_dir$path
+    })
+
+    observeEvent(ignoreNULL = TRUE,
+                 eventExpr = {
+                   input$dir
+                 },
+                 handlerExpr = {
+                   if (!'path' %in% names(dir())) return()
+
+
+                   root <- root_dirs[dir()$root]
+
+                   search_dir$path <-
+                     file.path(root, paste0(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
+                 }
+    )
+
+    #### ---------- SEARCH DIR FOR .RPROJ FILES ---------- ####
+
+    all_proj <- reactive({
+
+      # Issue #14
+
+      all_proj <- data.frame(path = dirRecur(search_dir$path),
+                             stringsAsFactors = FALSE)
+
+      if (!nrow(all_proj)) return(NULL)
+
+      all_proj[!all_proj$project %in% input$old_name, ]
+      all_proj$project <- ProjId(all_proj[[1]], 'proj')
+      all_proj$last_modified  <- as.Date(file.info(all_proj[[1]])$mtime)
+      all_proj$days_since_mod <- as.integer(Sys.Date() - all_proj$last_modified)
+      all_proj$last_modified  <- format(all_proj$last_modified, '%b %Y')
+      all_proj <- all_proj[order(all_proj$days_since_mod), ]
+
+      all_proj[c(2:4, 1)]
+
     })
 
     #### ---------- ADD CHOSEN PROJECTS ---------- ####

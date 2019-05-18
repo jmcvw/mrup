@@ -1,9 +1,9 @@
-Addin ~ MRUP
+Addin \~ MRUP
 ================
 
 <!-- EDIT IN README.RMD -->
 
-## An RStudio addin for manipluting the “Most Recently Used Projects” list
+## An RStudio addin for manipulating the “Most Recently Used Projects” list
 
 The addin allows projects to be added to, or removed from, the recent
 project drop-down menu. The addin also makes it possible to rename
@@ -12,10 +12,6 @@ existing projects without navigating file system manually.
 The RStudio menu shows a list of the 10 most recently used projects.
 This is based on the project\_mru file which may contain more than 10
 projects (apparently 15 max?).
-
-**NB:** By default, only projects saved in subdirectories of the `~/R` directory are
-found. It is possible to change which directory is searched on Windows machines only, so if you have a non-Windows machine and prefer to save projects all over your hard disc, this will
-currently not find projects located elsewhere.
 
 ### Install
 
@@ -52,11 +48,14 @@ app.
 
 ### Add tab
 
-All subdirectories of the `~/R` directory are searched for`.Rproj`
-files, and will likely take a few seconds to complete. Once done, a list
-is generated that indicates how long it has been since each project was
-modified. Selected projects are shown in a table that also shows the
-full path to the project.
+Adding new projects to the recently used list requires searching all
+subdirectories for `.Rproj` files. The default search location is `~/R`,
+but this can be changed by clicking the `Change` link. It may take
+several seconds to complete the search, with the time increasing the
+closer you get to the root directory of a hard disk. Once completed, a
+list is generated of all detected projects that indicates how long it
+has been since each project was modified. Selected projects are shown in
+a table that also shows the full path to the project.
 
 Pressing the
 <code style='background-color:#337ab7; color:white'>Add</code> button
