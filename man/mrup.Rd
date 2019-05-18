@@ -34,9 +34,7 @@ the bottom of the window.
 
 
   All subdirectories of the \code{~/R} directory are searched for
-  \code{.Rproj} files, and will likely take a few seconds to complete. On
-  Windows systems it is possible to specify a different directory (but see
-  note below).
+  \code{.Rproj} files, and will likely take a few seconds to complete.
 
   Once done, a list is generated that indicates how long it has been since
   each project was modified. Selected projects are shown in a table that also
@@ -51,13 +49,7 @@ the bottom of the window.
   Since the list can only show 10 projects, those further down will be
   removed, but will stay on the project_mru file (for a while at least).
 
-  \strong{NB:} Three points to be aware of when selecting a different directory to search.
-
-  \enumerate{
-    \item{It may take several seconds to locate all project files (even in the default location).}
-    \item{Sometimes the "Choose directory" dialogue windows opens behind the RStudio window.}
-    \item{Pressing the link more than once will cause several "Choose dir" windows to open.}
-   }
+  \strong{NB:} It may take several seconds to locate all project files (even in the default location).
 }
 
 \section{Rename tab}{
