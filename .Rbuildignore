@@ -6,4 +6,4 @@
 ^alt_mru\.R$
 ^.*\.Rmd$
 ^\.Rprofile$
-R/dirRecur\.R$
+^R/*_reprex_*$

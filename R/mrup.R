@@ -125,6 +125,7 @@ mrup <- function() {
 
   # --------------------------------------------------
 
+  #### ---------- UI ---------- ####
   ui <- miniPage(
 
     #### ---------- STYLE ---------- ####
@@ -187,6 +188,8 @@ mrup <- function() {
     #--------------------------------------------------#
 
     observeEvent(input$help, {
+      # help(topic = 'mrup', package = 'mrup')
+      # do.call(help, list(package = 'mrup', 'mrup'))
       if (length(find.package('rstudioapi', quiet = T)))
         rstudioapi::previewRd(file.path(find.package('mrup'), 'mrup.Rd'))
     })
@@ -199,7 +202,7 @@ mrup <- function() {
 
       list(
 
-        strong('Remove projects for recent projects list'),
+        strong('Remove projects from recent projects list'),
 
         p('Only the 10 most recently used projects are displayed in the projects list.'),
 
@@ -316,9 +319,16 @@ mrup <- function() {
 
       all_proj[!all_proj$project %in% input$old_name, ]
       all_proj$project <- ProjId(all_proj[[1]], 'proj')
+
       all_proj$last_modified  <- as.Date(file.info(all_proj[[1]])$mtime)
       all_proj$days_since_mod <- as.integer(Sys.Date() - all_proj$last_modified)
       all_proj$last_modified  <- format(all_proj$last_modified, '%b %Y')
+
+      # all_proj$modified       <- paste0(
+      #   all_proj$last_modified, ' (',
+      #   all_proj$days_since_mod, ' days)'
+      # )
+
       all_proj <- all_proj[order(all_proj$days_since_mod), ]
 
       all_proj[c(2:4, 1)]
@@ -335,7 +345,9 @@ mrup <- function() {
 
     output$choice_table <- renderTable({
       if (!is.null(input$proj_add_names)) {
-        add_choices()
+        tmp_df <- add_choices()
+        tmp_df[['path']] <- dirname(tmp_df[['path']])
+        tmp_df
       }
 
     })
