@@ -39,6 +39,81 @@ mrup <- function() {
 
   }
 
+
+
+
+
+
+    # search_dir <- reactiveValues(path = root_dirs[1])
+    # dir <- reactive(input$dir)
+
+  selectDirUI <- function(id, roots) {
+    ns <- NS(id)
+    tagList(
+      shinyDirChoose(
+        input,
+        ns('dir'),
+        roots = roots,
+        filetypes = c('Rproj', 'Rmd', 'R')
+      ),
+      verbatimTextOutput(ns('dir'))
+    )
+  }
+
+
+  selectDirServ <- function(input, output, session, dir) {
+    observeEvent(ignoreNULL = TRUE,
+                 eventExpr = {
+                   input$dir
+                 },
+                 handlerExpr = {
+                   if (!'path' %in% names(dir)) return()
+
+
+                   root <- root_dirs[dir$root]
+
+                   search_dir$path <-
+                     file.path(root, paste0(unlist(dir$path[-1]), collapse = .Platform$file.sep))
+                 }
+    )
+    output$dir <- renderText({
+      search_dir$path
+    })
+  }
+
+
+
+
+  # shinyDirChoose(
+  #   input,
+  #   'dir',
+  #   roots = root_dirs,
+  #   filetypes = c('Rproj', 'Rmd', 'R')
+  # )
+  #
+  # search_dir <- reactiveValues(path = root_dirs[1])
+
+  # dir <- reactive(input$dir)
+
+  # output$dir <- renderText({
+  #   search_dir$path
+  # })
+  #
+  # observeEvent(ignoreNULL = TRUE,
+  #              eventExpr = {
+  #                input$dir
+  #              },
+  #              handlerExpr = {
+  #                if (!'path' %in% names(dir())) return()
+  #
+  #
+  #                root <- root_dirs[dir()$root]
+  #
+  #                search_dir$path <-
+  #                  file.path(root, paste0(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
+  #              }
+  # )
+
   #### ---------- HELPER FUNS ---------- ####
 
   ProjId <- function(path, value = 'proj') {
@@ -196,6 +271,7 @@ mrup <- function() {
 
         p('Any project in the chosen directory can be opened'),
 
+        # selectDirUI(id = 'open', roots = root_dirs),
         selectProjInput('open-proj', proj_no_mru(), mult = FALSE)
 
       )
@@ -228,13 +304,12 @@ mrup <- function() {
 
     proj_no_mru <- reactive({
       # could be conoslidated
-      x <- all_proj()[!all_proj()$project %in% names(current_mru()[1:10]), ]
-
-      paste0(x[['project']], ' (', x[['days_since_mod']], ' days)')
-
+      x <- all_proj()[!all_proj()$on_list, ]
+      sprintf('%s (%s days)', x[['project']], x[['days_since_mod']])
     })
 
     output$add_proj_ui <- renderUI({
+
       list(
 
         p('Projects are listed in order of days since their last modification.'),
@@ -285,6 +360,7 @@ mrup <- function() {
 
     #### ---------- CHOOSE SEARCH DIR ---------- ####
 
+    # callModule(selectDirServ, id = 'open', dir = dir())
     shinyDirChoose(
       input,
       'dir',
@@ -332,6 +408,7 @@ mrup <- function() {
       all_proj$last_modified  <- as.Date(file.info(all_proj[[1]])$mtime)
       all_proj$days_since_mod <- as.integer(Sys.Date() - all_proj$last_modified)
       all_proj$last_modified  <- format(all_proj$last_modified, '%b %Y')
+      all_proj$on_list <- all_proj$project %in% names(current_mru()[1:10])
 
       # all_proj$modified       <- paste0(
       #   all_proj$last_modified, ' (',
@@ -339,8 +416,7 @@ mrup <- function() {
       # )
 
       all_proj <- all_proj[order(all_proj$days_since_mod), ]
-
-      all_proj[c(2:4, 1)]
+      all_proj[c(2:4, 1, 5)]
 
     })
 
@@ -358,9 +434,9 @@ mrup <- function() {
 
     output$choice_table <- renderTable({
       if (!is.null(input$proj_add_names)) {
-        tmp_df <- add_choices()
+        tmp_df <- add_choices()[-5]
         tmp_df[['path']] <- dirname(tmp_df[['path']])
-        tmp_df
+        setNames(tmp_df, c('Project', HTML('Accessed'), HTML('Days'), 'Path'))
       }
 
     })
