@@ -7,34 +7,49 @@
 mrup()
 }
 \description{
-An add-in for managing the RStudio recently used projects list. It allows
-projects to be added to, or removed from the recent project drop-down menu.
-It also makes it possible to rename existing projects without navigating file
-system manually.
+An add-in for managing the RStudio \emph{Recently Used Projects} list. It
+simplifies opening projects that do not appear in the RStudio projects
+drop-down menu as well as projects to be added to, or removed from the recent
+project drop-down menu. It also makes it possible to rename existing projects
+without manually navigating the file system
 }
 \details{
-The three functions of the app are each accessed through a dedicated tab at
+The four functions of the app are each accessed through a dedicated tab at
 the bottom of the window.
 }
+\section{Open tab}{
+
+
+  The "Open project" tab makes it easier than navigating the directory system
+  to locate old projects. The chosen directory and all sub-directories are
+  searched and all projects found are listed. The search directory can be
+  changed by clicking the link and navigating to the desired location.
+
+  It is possible to open the chosen project in either the current or a new
+  RStudio session.
+}
+
 \section{Remove tab}{
 
 
   The RStudio menu shows a list of the 10 most recently used projects. This
   is based on the project_mru file which may contain more than 10 projects
   (apparently 15 max?). The remove tab lists the entire contents of the
-  project_mru file, and allows any of them to be removed. The benefit of this
-  is that is is possible to see which projects were recently removed.
+  project_mru file, and allows any of them to be removed.
 
   Pressing the \code{Remove} button creates a modified list to replace the
-  current list. Replacement only takes place if the \code{Save changes}
-  button is pressed.
+  current list.
+
+  Replacement only takes place if the \code{Save changes} button is pressed.
 }
 
 \section{Add tab}{
 
 
   All subdirectories of the \code{~/R} directory are searched for
-  \code{.Rproj} files, and will likely take a few seconds to complete.
+  \code{.Rproj} files, and may take a few seconds to complete.  The directory
+  searched is the same as set in the "Open project" tab, where it can also be
+  changed.
 
   Once done, a list is generated that indicates how long it has been since
   each project was modified. Selected projects are shown in a table that also
@@ -49,28 +64,36 @@ the bottom of the window.
   Since the list can only show 10 projects, those further down will be
   removed, but will stay on the project_mru file (for a while at least).
 
-  \strong{NB:} It may take several seconds to locate all project files (even in the default location).
+  \strong{NB:} It may take several seconds to locate all project files (even
+  in the default location).
 }
 
 \section{Rename tab}{
 
 
-  Because searching for all files takes some time, only projects already on
-  the list can be renamed. Using the refresh button allows the list to be
-  updated without restarting the add-in. When renaming, select 1 project and
-  enter the new name in the box, without a file extension. As long as the
-  project directory has the same name as the project itself, both shall be
-  renamed, and the \code{.Rproj} extension will remain.
+  As with opening and adding projects to the MRU list, the projects listed
+  are those found in the directory set in the "Open project" tab. After
+  making changes pressing the refresh button allows the list to be updated
+  without restarting the add-in.
+
+  When renaming, select 1 project and enter the new name in the box, without
+  a file extension. As long as the project directory has the same name as the
+  project itself, both shall be renamed, and the \code{.Rproj} extension will
+  remain intact.
 
   The name change is implemented immediately on pressing \code{Rename}, with
-  no need to press \code{Save changes}, and without the ability to cancel. To
-  undo a rename, the project can be re-renamed straight away.
+  no need to press \code{Save}, and without the ability to cancel. To undo a
+  rename, the project can be re-renamed straight away. Pressing \code{save}
+  is required to update the RStudio drop down menu. In order to rename the
+  same project more than once (e.g. to restore the original name) it is
+  currently necessary to reload the app by pressing the reload button at the
+  top right of the viewer pane.
 
   There may be instances where the project has a name that is different from
   the containing directory. In this case only the \code{.Rproj} file (and
-  therefore the preject itself) is renamed. If it is desired that the names
+  therefore the project itself) is renamed. If it is desired that the names
   be made the same, changing the \code{.Rproj} first to match the directory,
   then renaming again to the desired name will result in both the directory
-  and project aquiring the new name.
+  and project acquiring the new name.
 }
 

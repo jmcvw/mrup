@@ -1,6 +1,6 @@
 #' Manage recent projects
 #'
-#' An add-in for managing the RStudio \italic{Recently Used Projects} list. It
+#' An add-in for managing the RStudio \emph{Recently Used Projects} list. It
 #' simplifies opening projects that do not appear in the RStudio projects
 #' drop-down menu as well as projects to be added to, or removed from the recent
 #' project drop-down menu. It also makes it possible to rename existing projects
@@ -9,7 +9,7 @@
 #' The four functions of the app are each accessed through a dedicated tab at
 #' the bottom of the window.
 #'
-#' @section Open tab
+#' @section Open tab:
 #'
 #'   The "Open project" tab makes it easier than navigating the directory system
 #'   to locate old projects. The chosen directory and all sub-directories are
@@ -67,11 +67,12 @@
 #'   remain intact.
 #'
 #'   The name change is implemented immediately on pressing \code{Rename}, with
-#'   no need to press \code{Save changes}, and without the ability to cancel. To
-#'   undo a rename, the project can be re-renamed straight away. In order to
-#'   rename the same project more than once (e.g. to restore the original name)
-#'   it is currently necessary to reload the app by pressing the reload button
-#'   at the top right of the viewer pane.
+#'   no need to press \code{Save}, and without the ability to cancel. To undo a
+#'   rename, the project can be re-renamed straight away. Pressing \code{save}
+#'   is required to update the RStudio drop down menu. In order to rename the
+#'   same project more than once (e.g. to restore the original name) it is
+#'   currently necessary to reload the app by pressing the reload button at the
+#'   top right of the viewer pane.
 #'
 #'   There may be instances where the project has a name that is different from
 #'   the containing directory. In this case only the \code{.Rproj} file (and
@@ -336,7 +337,8 @@ mrup <- function() {
         selectInput(
           'old_name', 'Choose project to rename',
           choices = c('Choose...' = '', choices),
-          selectize = FALSE,
+          selectize = TRUE,
+          # size = n,
           width = '100%'
         ),
 
@@ -344,7 +346,7 @@ mrup <- function() {
                   width = '100%'),
 
         actionButton('rename_btn', 'Rename', class = 'mru_btn'),
-        em('Takes place immediately, without pressing save.'),
+        em('Press save to also update the RStudio dropdown menu.'),
       )
     })
 
