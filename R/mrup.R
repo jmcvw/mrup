@@ -70,7 +70,7 @@
 #'   no need to press \code{Save changes}, and without the ability to cancel. To
 #'   undo a rename, the project can be re-renamed straight away. In order to
 #'   rename the same project more than once (e.g. to restore the original name)
-#'   it is currently necessary to reload the app by preesing the reload button
+#'   it is currently necessary to reload the app by pressing the reload button
 #'   at the top right of the viewer pane.
 #'
 #'   There may be instances where the project has a name that is different from
@@ -78,7 +78,7 @@
 #'   therefore the project itself) is renamed. If it is desired that the names
 #'   be made the same, changing the \code{.Rproj} first to match the directory,
 #'   then renaming again to the desired name will result in both the directory
-#'   and project aquiring the new name.
+#'   and project acquiring the new name.
 #'
 #' @details
 #'
