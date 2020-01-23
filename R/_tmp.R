@@ -7,68 +7,34 @@ mrup <- function() {
   library(shinyFiles)
 
   ####---------- MODULES ----------####
-  selectProjInput <- function(id, proj_list, mult) {
 
-    ns <- NS(id)
-
-    tagList(
-      selectInput(
-        ns('open_proj_choice'), 'Projects',
-
-        choices = c('Choose...' = '', proj_list),
-        selectize = TRUE,
-        multiple = mult,
-        width = '100%'),
-
-      checkboxInput(ns('new_session'),
-                    'Open in new RStudio session?',
-                    value = TRUE),
-      actionButton(ns('open_btn'), 'Open', class = 'mru_btn')
-
-    )
-  }
-
-  selectProjServ <- function(input, output, session, project_data) {
-
-    observeEvent(input$open_btn, {
-      choice <- sub('\\s.*$', '', input$open_proj_choice)
-      choice <- project_data[project_data$project == choice, 'path']
-
-      rstudioapi::openProject(choice, input$new_session)
-    })
-
-  }
-
-
-
-
-
-
-    # search_dir <- reactiveValues(path = root_dirs[1])
-    # dir <- reactive(input$dir)
-
-  selectDirUI <- function(id, roots) {
+selectDirUI <- function(input, id, roots, session = session) {
     ns <- NS(id)
     tagList(
-      shinyDirChoose(
-        input,
-        ns('dir'),
-        roots = roots,
-        filetypes = c('Rproj', 'Rmd', 'R')
-      ),
+      shinyDirLink(ns('dir'), '(Change?)', 'Locate project folder...'),
       verbatimTextOutput(ns('dir'))
     )
   }
 
+#------------------#
 
-  selectDirServ <- function(input, output, session, dir) {
+  selectDirServ <- function(input, output, session, dir, search_dir) {
+
+
     observeEvent(ignoreNULL = TRUE,
                  eventExpr = {
                    input$dir
                  },
                  handlerExpr = {
-                   if (!'path' %in% names(dir)) return()
 
+                   shinyDirChoose(
+                     input,
+                     'dir',
+                     roots = root_dirs,
+                     filetypes = c('Rproj', 'Rmd', 'R')
+                   )
+
+                   if (!'path' %in% names(dir)) return()
 
                    root <- root_dirs[dir$root]
 
@@ -84,35 +50,6 @@ mrup <- function() {
 
 
 
-  # shinyDirChoose(
-  #   input,
-  #   'dir',
-  #   roots = root_dirs,
-  #   filetypes = c('Rproj', 'Rmd', 'R')
-  # )
-  #
-  # search_dir <- reactiveValues(path = root_dirs[1])
-
-  # dir <- reactive(input$dir)
-
-  # output$dir <- renderText({
-  #   search_dir$path
-  # })
-  #
-  # observeEvent(ignoreNULL = TRUE,
-  #              eventExpr = {
-  #                input$dir
-  #              },
-  #              handlerExpr = {
-  #                if (!'path' %in% names(dir())) return()
-  #
-  #
-  #                root <- root_dirs[dir()$root]
-  #
-  #                search_dir$path <-
-  #                  file.path(root, paste0(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
-  #              }
-  # )
 
   #### ---------- HELPER FUNS ---------- ####
 
@@ -163,10 +100,7 @@ mrup <- function() {
   if (!length(mru_path_opts))
     stop('File "project_mru" not found')
 
-  root_dirs <- c(`Git repos` = normalizePath('~/R/ProjectDir/git_repos', .Platform$file.sep),
-                 `~/R` = normalizePath('~/R', .Platform$file.sep),
-                 Home  = normalizePath('~', .Platform$file.sep),
-                 getVolumes()())
+  root_dirs <- c(`Git repos` = normalizePath('~/R/ProjectDir/git_repos', .Platform$file.sep), '/R' = normalizePath('~/R'))
   root_dirs <- root_dirs[dir.exists(root_dirs)]
 
   # --------------------------------------------------
@@ -205,26 +139,12 @@ mrup <- function() {
                    )
       ),
 
-      #### ---------- REMOVE PROJECT TABPANEL ---------- ####
-      miniTabPanel('Remove project from list', icon = icon('minus-circle'),
-                   miniContentPanel(
-                     uiOutput('remove_proj_ui')
-                   )
-      ),
-
       #### ---------- ADD PROJECT TABPANEL ---------- ####
       # See issue #11 - maybe no needed anymore?
       miniTabPanel('Add project to list', icon = icon('plus-circle'),
                    miniContentPanel(
                      strong('Add projects to recent project list'),
                      uiOutput('add_proj_ui')
-                   )
-      ),
-
-      #### ---------- RENAME PROJECT TABPANEL---------- ####
-      miniTabPanel('Rename project', icon = icon('file-text'),
-                   miniContentPanel(
-                     uiOutput('rename_proj')
                    )
       )
     )
@@ -264,39 +184,27 @@ mrup <- function() {
 
         strong('Current search directory. '),
         p('The selected directory will also be used for finding projects to rename or add to the MRU list'),
-        shinyDirLink('dir', '(Change?)', 'Browse...'),
-        verbatimTextOutput('dir'),
+
+        # shinyDirLink('dir', '(Change?)', 'Browse...'),
+        # verbatimTextOutput('dir'),
 
         strong('Open a project, not currently on the "Recently used" list, to open'),
 
         p('Any project in the chosen directory can be opened'),
 
-        # selectDirUI(id = 'open', roots = root_dirs),
-        selectProjInput('open-proj', proj_no_mru(), mult = FALSE)
+        selectDirUI(input = input, id = 'open', roots = root_dirs),
+        selectInput(
+          'open_proj_choice', 'Projects',
 
-      )
-    })
+          choices = c('Choose...' = '', proj_no_mru()),
+          selectize = TRUE,
+          multiple = FALSE,
+          width = '100%'),
 
-    #### ---------- REMOVE PROJECT UI ---------- ####
-
-    output$remove_proj_ui <- renderUI({
-
-      length_mru <- length(current_mru())
-
-      list(
-
-        strong('Remove projects from recent projects list'),
-
-        p('Only the 10 most recently used projects are displayed in the projects list.'),
-
-        if (length_mru != 10)
-          p('RStudio currently has a record of the last ', length_mru, 'projects.'),
-
-        checkboxGroupInput('selection',
-                           'Current project list',
-                           current_mru()),
-
-        actionButton('remove_btn', 'Remove', class = 'mru_btn')
+        checkboxInput('new_session',
+                      'Open in new RStudio session?',
+                      value = TRUE),
+        actionButton('open_btn', 'Open', class = 'mru_btn')
       )
     })
 
@@ -333,63 +241,39 @@ mrup <- function() {
       )
     })
 
-    #### ---------- RENAME-PROJECT UI ---------- ####
-
-    output$rename_proj <- renderUI({
-
-      choices <- isolate({ all_proj()$project })
-
-      tagList(
-        strong('Rename existing projects'),
-
-        selectInput(
-          'old_name', 'Choose project to rename',
-          choices = c('Choose...' = '', choices),
-          selectize = FALSE,
-          width = '100%'
-        ),
-
-        textInput('new_name', 'Enter new project name',
-                  width = '100%'),
-
-        actionButton('rename_btn', 'Rename', class = 'mru_btn'),
-        em('Takes place immediately, without pressing save.')
-      )
-    })
-
-
     #### ---------- CHOOSE SEARCH DIR ---------- ####
 
-    # callModule(selectDirServ, id = 'open', dir = dir())
-    shinyDirChoose(
-      input,
-      'dir',
-      roots = root_dirs,
-      filetypes = c('Rproj', 'Rmd', 'R')
-    )
+    search_dir <- reactiveValues(path = root_dirs[1]) ## in server?
+    dir <- reactive(input$dir)  # in server module?
 
-    search_dir <- reactiveValues(path = root_dirs[1])
+    callModule(selectDirServ, id = 'open', dir = dir(), search_dir = search_dir)
 
-    dir <- reactive(input$dir)
-
-    output$dir <- renderText({
-      search_dir$path
-    })
-
-    observeEvent(ignoreNULL = TRUE,
-                 eventExpr = {
-                   input$dir
-                 },
-                 handlerExpr = {
-                   if (!'path' %in% names(dir())) return()
-
-
-                   root <- root_dirs[dir()$root]
-
-                   search_dir$path <-
-                     file.path(root, paste0(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
-                 }
-    )
+    # shinyDirChoose(
+    #   input,
+    #   'dir',
+    #   roots = root_dirs,
+    #   filetypes = c('Rproj', 'Rmd', 'R')
+    # )
+    #
+    #
+    # output$dir <- renderText({
+    #   search_dir$path
+    # })
+    #
+    # observeEvent(ignoreNULL = TRUE,
+    #              eventExpr = {
+    #                input$dir
+    #              },
+    #              handlerExpr = {
+    #                if (!'path' %in% names(dir())) return()
+    #
+    #
+    #                root <- root_dirs[dir()$root]
+    #
+    #                search_dir$path <-
+    #                  file.path(root, paste0(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
+    #              }
+    # )
 
     #### ---------- SEARCH DIR FOR .RPROJ FILES ---------- ####
 
@@ -422,7 +306,12 @@ mrup <- function() {
 
     #### ---------- OPEN PROJECT ---------- ####
 
-    callModule(selectProjServ, "open-proj", all_proj())
+    observeEvent(input$open_btn, {
+      choice <- sub('\\s.*$', '', input$open_proj_choice)
+      choice <- project_data[project_data$project == choice, 'path']
+
+      rstudioapi::openProject(choice, input$new_session)
+    })
 
     #### ---------- ADD CHOSEN PROJECTS ---------- ####
 
@@ -451,31 +340,6 @@ mrup <- function() {
       temp_mru <- ProjId(add_choices()$path, 'full')
       names(temp_mru) <- ProjId(temp_mru, 'proj')
       current_mru({ c(temp_mru, current_mru()) })
-    })
-
-    #### ---------- RENAME PROJECT ---------- ####
-
-    observeEvent(input$rename_btn, {
-
-      # Rename .Rproj file and dir
-      on <- all_proj()[all_proj()$project == input$old_name, 'path']
-      nn <- gsub(input$old_name, input$new_name, on)
-      file.rename(on, file.path(dirname(on), basename(nn)))  # rename file
-      file.rename(dirname(on), dirname(nn))  # rename dir
-
-      # Update mru
-      temp_mru <- current_mru()
-
-      temp_mru[input$old_name] <- gsub(
-        input$old_name,
-        input$new_name,
-        temp_mru[input$old_name]
-      )
-
-      temp_mru <- ProjId(temp_mru, 'full')
-      names(temp_mru) <- ProjId(temp_mru, 'proj')
-
-      current_mru(temp_mru)
     })
 
     #### ---------- STOP APP AND SAVE CHANGES ---------- ####
