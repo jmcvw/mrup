@@ -358,6 +358,7 @@ mrup <- function() {
     output$dir <- renderText({
       search_dir$path
     })
+
     shinyDirChoose(
       input,
       'dir',
@@ -372,10 +373,8 @@ mrup <- function() {
                  handlerExpr = {
                    if (!'path' %in% names(dir())) return()
 
-                   root <- root_dirs[dir()$root]
-
-                   search_dir$path <-
-                     file.path(root, paste0(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
+                   search_dir$path <- parseDirPath(root_dirs,
+                                                   input$dir)
                  }
     )
 
