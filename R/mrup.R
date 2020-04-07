@@ -346,6 +346,7 @@ mrup <- function() {
                   width = '100%'),
 
         actionButton('rename_btn', 'Rename', class = 'mru_btn'),
+        p(),
         em('Press save to also update the RStudio dropdown menu.'),
       )
     })

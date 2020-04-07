@@ -5,9 +5,11 @@ Addin \~ MRUP
 
 ## An RStudio addin for manipulating the “Most Recently Used Projects” list
 
-The addin allows projects to be added to, or removed from, the recent
-project drop-down menu. The addin also makes it possible to rename
-existing projects without navigating file system manually.
+Easily open any previous project.  
+Add projects to, or remove projects from, the recent project drop-down
+menu.  
+Easily rename existing projects without navigating the file system
+manually.
 
 The RStudio menu shows a list of the 10 most recently used projects.
 This is based on the project\_mru file which may contain more than 10
@@ -29,7 +31,29 @@ Then locate the `mrup` section and click on the description text below
 
 ![](images/mrup_menu.PNG)
 
-### Remove tab
+-----
+
+#### Open tab
+
+In the open tab it is possible to open any RStudio project even if it is
+not on the recently used list.
+
+The directory structure of your computer can be searched and all
+projects located within the chosen directory are displayed. The default
+search location is `~/R`, but this can be changed by clicking the
+`Change` link. It may take several seconds to complete the search, with
+the time increasing the closer you get to the root directory of a hard
+disk. Once completed, a
+
+The chosen project can then be opened in either the current or a new
+session. The chosen directory is also used for the **Add projects** and
+**Rename project** tab.
+
+![](images/open_projects.PNG)
+
+-----
+
+#### Remove tab
 
 The remove tab lists the contents of the current project\_mru file, in
 its entirety. The means it is possible to see which projects were
@@ -46,16 +70,14 @@ app.
 
 ![](images/remove_projects.PNG)
 
-### Add tab
+#### Add tab
 
 Adding new projects to the recently used list requires searching all
-subdirectories for `.Rproj` files. The default search location is `~/R`,
-but this can be changed by clicking the `Change` link. It may take
-several seconds to complete the search, with the time increasing the
-closer you get to the root directory of a hard disk. Once completed, a
-list is generated of all detected projects that indicates how long it
-has been since each project was modified. Selected projects are shown in
-a table that also shows the full path to the project.
+subdirectories for `.Rproj` files. The search directory (i.e the circled
+input) is now chosen ion the **Open project** tab. A list of all
+detected projects is displayed that indicates how long it has been since
+each project was modified. Selected projects are shown in a table that
+also shows the full path to the project.
 
 Pressing the
 <code style='background-color:#337ab7; color:white'>Add</code> button
@@ -69,20 +91,23 @@ app.
 
 ![](images/add_projects.PNG)
 
-### Rename tab
+-----
 
-Because searching for all files takes some time, only projects already
-on the list can be renamed. Using the refresh button allows the list to
-be updated without restarting the add-in. When renaming, select one
-project and enter the new name in the box, without a file extension. As
-long as the project directory has the same name as the project itself,
-both shall be renamed, and the `.Rproj` extension will remain.
+#### Rename tab
+
+Any project can be renamed as long as it is located within the directory
+chosen in the **Open project** tab. After renaming, pressing the refresh
+button allows the list to be updated without restarting the add-in. When
+renaming, select one project and enter the new name in the box, without
+a file extension. As long as the project directory has the same name as
+the project itself, both shall be renamed, and the `.Rproj` extension
+will remain.
 
 The name change is implemented immediately on pressing
 <code style='background-color:#337ab7; color:white'>Rename</code>, with
 no need to press
 <code style='background-color:#3cb371; color:white'>Save changes</code>,
 and without the ability to cancel. To undo a rename, the project can be
-re-renamed straight away.
+re-renamed straight away, after refreshing the app.
 
 ![](images/rename_projects.PNG)
