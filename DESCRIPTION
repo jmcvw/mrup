@@ -12,5 +12,6 @@ LazyData: true
 Imports:
     shiny,
     miniUI,
-    shinyFiles
+    shinyFiles,
+    rstudioapi
 RoxygenNote: 7.1.0

@@ -83,11 +83,15 @@
 #'
 #' @details
 #'
+#' @import shiny
+#' @import miniUI
+#'
 mrup <- function() {
 
-  library(shiny)
-  library(miniUI)
-  library(shinyFiles)
+  if (!requireNamespace("rstudioapi", quietly = TRUE)) {
+    stop("mrup requires RStudio v0.99.878 or newer",
+         call. = FALSE)
+  }
 
   #### ---------- HELPER FUNS ---------- ####
 
@@ -141,7 +145,7 @@ mrup <- function() {
   root_dirs <- c(`Git repos` = normalizePath('~/R/ProjectDir/git_repos', .Platform$file.sep),
                  `~/R` = normalizePath('~/R', .Platform$file.sep),
                  Home  = normalizePath('~', .Platform$file.sep),
-                 getVolumes()())
+                 shinyFiles::getVolumes()())
   root_dirs <- root_dirs[dir.exists(root_dirs)]
 
   # --------------------------------------------------
@@ -207,13 +211,6 @@ mrup <- function() {
   #### ---------- SERVER ---------- ####
   server <- function(input, output) {#, session) {
 
-
-    if (!length(find.package('rstudioapi', quiet = T)) ||
-        !rstudioapi::isAvailable()) {
-      cat('\n"MRUP" requires Rstudio to open or search for projects.\n')
-      shiny::stopApp()
-    }
-
     current_mru <- reactiveVal({
       mru_list <- readLines(mru_path)
       names(mru_list) <- ProjId(mru_list)
@@ -238,7 +235,7 @@ mrup <- function() {
 
         strong('Current search directory. '),
         p('The selected directory will also be used for finding projects to rename or add to the MRU list'),
-        shinyDirLink('dir', '(Change?)', 'Browse...'),
+        shinyFiles::shinyDirLink('dir', '(Change?)', 'Browse...'),
         verbatimTextOutput('dir'),
 
         strong('Open a project, not currently on the "Recently used" list, to open'),
@@ -361,7 +358,7 @@ mrup <- function() {
     output$dir <- renderText({
       search_dir$path
     })
-    shinyDirChoose(
+    shinyFiles::shinyDirChoose(
       input,
       'dir',
       roots = root_dirs,
