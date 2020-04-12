@@ -39,8 +39,11 @@ rsconnect/
 # Other stuff
 *.pptx
 *.html
-*.Rmd
 tmp_*.R
+_tmp_*.R
+*_reprex_*
+reprex/
 alt_mru.R
 .Rproj.user
 .Rprofile
+

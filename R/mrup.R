@@ -1,6 +1,6 @@
 #' Manage recent projects
 #'
-#' An add-in for managing the RStudio \italic{Recently Used Projects} list. It
+#' An add-in for managing the RStudio \emph{Recently Used Projects} list. It
 #' simplifies opening projects that do not appear in the RStudio projects
 #' drop-down menu as well as projects to be added to, or removed from the recent
 #' project drop-down menu. It also makes it possible to rename existing projects
@@ -9,7 +9,7 @@
 #' The four functions of the app are each accessed through a dedicated tab at
 #' the bottom of the window.
 #'
-#' @section Open tab
+#' @section Open tab:
 #'
 #'   The "Open project" tab makes it easier than navigating the directory system
 #'   to locate old projects. The chosen directory and all sub-directories are
@@ -67,11 +67,12 @@
 #'   remain intact.
 #'
 #'   The name change is implemented immediately on pressing \code{Rename}, with
-#'   no need to press \code{Save changes}, and without the ability to cancel. To
-#'   undo a rename, the project can be re-renamed straight away. In order to
-#'   rename the same project more than once (e.g. to restore the original name)
-#'   it is currently necessary to reload the app by pressing the reload button
-#'   at the top right of the viewer pane.
+#'   no need to press \code{Save}, and without the ability to cancel. To undo a
+#'   rename, the project can be re-renamed straight away. Pressing \code{save}
+#'   is required to update the RStudio drop down menu. In order to rename the
+#'   same project more than once (e.g. to restore the original name) it is
+#'   currently necessary to reload the app by pressing the reload button at the
+#'   top right of the viewer pane.
 #'
 #'   There may be instances where the project has a name that is different from
 #'   the containing directory. In this case only the \code{.Rproj} file (and
@@ -82,11 +83,15 @@
 #'
 #' @details
 #'
+#' @import shiny
+#' @import miniUI
+#'
 mrup <- function() {
 
-  library(shiny)
-  library(miniUI)
-  library(shinyFiles)
+  if (!requireNamespace("rstudioapi", quietly = TRUE)) {
+    stop("mrup requires RStudio v0.99.878 or newer",
+         call. = FALSE)
+  }
 
   #### ---------- HELPER FUNS ---------- ####
 
@@ -140,7 +145,7 @@ mrup <- function() {
   root_dirs <- c(`Git repos` = normalizePath('~/R/ProjectDir/git_repos', .Platform$file.sep),
                  `~/R` = normalizePath('~/R', .Platform$file.sep),
                  Home  = normalizePath('~', .Platform$file.sep),
-                 getVolumes()())
+                 shinyFiles::getVolumes()())
   root_dirs <- root_dirs[dir.exists(root_dirs)]
 
   # --------------------------------------------------
@@ -237,7 +242,7 @@ mrup <- function() {
 
         strong('Current search directory. '),
         p('The selected directory will also be used for finding projects to rename or add to the MRU list'),
-        shinyDirLink('dir', '(Change?)', 'Browse...'),
+        shinyFiles::shinyDirLink('dir', '(Change?)', 'Browse...'),
         verbatimTextOutput('dir'),
 
         strong('Open a project, not currently on the "Recently used" list, to open'),
@@ -322,8 +327,8 @@ mrup <- function() {
     #### ---------- RENAME-PROJECT UI ---------- ####
 
     output$rename_proj <- renderUI({
-      # n <- min(length(current_mru()), 10)
 
+      n <- min(length(current_mru()), 1) # 10) # to set size of select input box
       choices <- isolate({ all_proj()$project })
 
       tagList(
@@ -336,7 +341,6 @@ mrup <- function() {
         selectInput(
           'old_name', 'Choose project to rename',
           choices = c('Choose...' = '', choices),
-          selectize = TRUE,
           width = '100%'
         ),
 
@@ -344,7 +348,8 @@ mrup <- function() {
                   width = '100%'),
 
         actionButton('rename_btn', 'Rename', class = 'mru_btn'),
-        em('Takes place immediately, without pressing save.'),
+        p(),
+        em('Press save to also update the RStudio dropdown menu.'),
       )
     })
 
@@ -358,8 +363,7 @@ mrup <- function() {
     output$dir <- renderText({
       search_dir$path
     })
-
-    shinyDirChoose(
+    shinyFiles::shinyDirChoose(
       input,
       'dir',
       roots = root_dirs,
@@ -373,8 +377,15 @@ mrup <- function() {
                  handlerExpr = {
                    if (!'path' %in% names(dir())) return()
 
-                   search_dir$path <- parseDirPath(root_dirs,
+# <<<<<<< HEAD
+                   search_dir$path <- shinyFiles::parseDirPath(root_dirs,
                                                    input$dir)
+# =======
+#                    root <- root_dirs[dir()$root]
+#
+#                    search_dir$path <-
+#                      file.path(root, paste0(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
+# >>>>>>> master
                  }
     )
 

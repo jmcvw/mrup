@@ -1,7 +1,7 @@
 Package: mrup
 Type: Package
 Title: Manage Most Recently Used Project List
-Version: 0.3.0
+Version: 0.5.0
 Author: John Wilson
 Maintainer: John Wilson <jow2@stir.ac.uk>
 Description: Add-in for managing the recent projects list. Projects on the list
@@ -12,5 +12,6 @@ LazyData: true
 Imports:
     shiny,
     miniUI,
-    shinyfiles
-RoxygenNote: 6.1.1
+    shinyFiles,
+    rstudioapi
+RoxygenNote: 7.1.0
