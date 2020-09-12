@@ -220,9 +220,7 @@ mrup <- function() {
     #--------------------------------------------------#
 
     observeEvent(input$help, {
-      # help(topic = 'mrup', package = 'mrup')
-      # do.call(help, list(package = 'mrup', 'mrup'))
-      rstudioapi::previewRd(file.path(find.package('mrup'), 'mrup.Rd'))
+      rstudioapi::previewRd(system.file('mrup.Rd', package = 'mrup'))
     })
 
     ####---------- OPEN PROJECT UI ----------####

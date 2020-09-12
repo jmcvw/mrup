@@ -7,3 +7,4 @@
 ^.*\.Rmd$
 ^\.Rprofile$
 ^R/*_reprex_*$
+^misc/*^
