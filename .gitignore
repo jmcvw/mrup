@@ -46,4 +46,8 @@ reprex/
 alt_mru.R
 .Rproj.user
 .Rprofile
+<<<<<<< HEAD
 _misc/
+=======
+
+>>>>>>> refactor
