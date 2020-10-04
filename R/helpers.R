@@ -1,5 +1,3 @@
-#### ---------- HELPER FUNS ---------- ####
-
 #' @export
 #' @keywords internal
 #'
@@ -10,8 +8,6 @@ ProjId <- function(path, value = 'proj') {
          dir  = sub('^.+/Documents', '~', dirname(path))
   )
 }
-
-
 
 
 #' @export
@@ -37,6 +33,7 @@ dirRecur <- function(search.dir, ext = '\\.Rproj$',
 
 }
 
+
 #' @export
 #' @keywords internal
 #'
@@ -47,6 +44,7 @@ find_roots <- function() {
   dirs[dir.exists(dirs)]
 
 }
+
 
 #' Simplify MRU
 #'
@@ -78,6 +76,7 @@ choose_proj_to_open <- function(d, choice, open_new) {
   rstudioapi::openProject(choice, open_new)
 }
 
+
 #' Compile project data
 #'
 #' Compile a dataframe of projects contained within the chosen search directory
@@ -90,9 +89,9 @@ choose_proj_to_open <- function(d, choice, open_new) {
 #' @export
 #' @keywords internal
 #'
-compile_proj <- function(search_path, input = NULL) {
+compile_proj <- function(search_path, input) {
   proj_list <- data.frame(path = dirRecur(search_path),
-                         stringsAsFactors = FALSE)
+                          stringsAsFactors = FALSE)
 
   if (!nrow(proj_list)) return(NULL)
 
@@ -108,6 +107,7 @@ compile_proj <- function(search_path, input = NULL) {
   proj_list[c(2:4, 1)]
 }
 
+
 #' @return
 #' @export
 #' @keywords internal
@@ -115,6 +115,7 @@ compile_proj <- function(search_path, input = NULL) {
 remove_proj_from_mru <- function(remove, mru) {
   mru(mru()[!mru() %in% remove])
 }
+
 
 #' @return
 #' @export
@@ -128,9 +129,12 @@ add_proj_to_mru <- function(add, mru) {
 
 }
 
+
 #' Rename project files
 #'
-#' Renames both the project directory and .Rproj file, as well as updating
+#' Renames both the project directory and .Rproj file, as well as updating.
+#'
+#' Currently changes project_mru as side effect
 #'
 #' @param d Dataframe; All projects found in chosen directory
 #' @param old_name Character; Name of project to change

@@ -1,3 +1,17 @@
+# style
+mrup_style <- shiny::tags$head(
+  shiny::tags$style(shiny::HTML("
+                      .mru_btn {
+                        color: #ffffff;
+                        background-color: #337ab7;
+                        border-color: #2e6da4;
+                      }
+                      #done {
+                        background-color: #3cb371;
+                      }
+                      "))
+)
+
 # Known possible locations of mru file
 mon_list <- file.path(c('rstudio', 'RStudio-Desktop', '.rstudio-desktop'),
                       "monitored/lists/project_mru")
@@ -18,4 +32,9 @@ excl_dirs <- paste0(
   c(dirname(.libPaths()), '\\.git$', '\\.Rproj\\.user$'),
   collapse = '|')
 
-usethis::use_data(mru_path_opts, root_dirs, excl_dirs, internal = TRUE, overwrite = TRUE)
+
+
+
+usethis::use_data(mrup_style, mru_path_opts,
+                  root_dirs, excl_dirs,
+                  internal = TRUE, overwrite = TRUE)
