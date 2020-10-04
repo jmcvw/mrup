@@ -93,67 +93,18 @@ mrup <- function() {
          call. = FALSE)
   }
 
-  #### ---------- HELPER FUNS ---------- ####
 
-  ProjId <- function(path, value = 'proj') {
-    switch(value,
-           full = sub('^.+/Documents', '~', path),
-           proj = sub('\\.Rproj$', '', basename(path)),
-           dir  = sub('^.+/Documents', '~', dirname(path))
-    )
-  }
-
-  excl_dirs <- paste0(
-    c(dirname(.libPaths()), '\\.git$', '\\.Rproj\\.user$'),
-    collapse = '|')
-
-  dirRecur <- function(search.dir, ext = '\\.Rproj$',
-                       excl = excl_dirs) {
-
-    dirs <- list.dirs(search.dir, full.names = TRUE, recursive = FALSE)
-
-    if (!missing(excl))
-      dirs <- dirs[!grepl(excl, dirs)]
-
-    files  <- dir(search.dir, patt = ext, full.names = TRUE)
-
-    if (!length(dirs) && !length(files ))
-      return()
-
-    if(!length(dirs) && length(files ))
-      return(files )
-
-    c(files , lapply(dirs, dirRecur, ext, excl), recursive = TRUE)
-
-  }
-
-  #### ---------- SET MRU PATH ---------- ####
-  # Known possible locations of mru file
-  mru_path_opts <- c(
-    file.path('~/AppData/Local/RStudio-Desktop/monitored/lists/project_mru'),
-    file.path('C:/Users', Sys.info()['user'], 'AppData/Local/RStudio-Desktop/monitored/lists/project_mru'),
-    file.path('~/.rstudio-desktop/monitored/lists/project_mru'),
-    file.path('C:/Users', Sys.info()['user'], '.rstudio-desktop/monitored/lists/project_mru')
-  )
-
-  mru_path <- mru_path_opts[file.exists(mru_path_opts)]
+  mru_path <- mru_path_opts[file.exists(mru_path_opts)][1]
 
   # choose path
-  if (!length(mru_path_opts))
+  if (!length(mru_path))
     stop('File "project_mru" not found')
 
-  root_dirs <- c(`Git repos` = normalizePath('~/R/ProjectDir/git_repos', .Platform$file.sep),
-                 `~/R` = normalizePath('~/R', .Platform$file.sep),
-                 Home  = normalizePath('~', .Platform$file.sep),
-                 shinyFiles::getVolumes()())
-  root_dirs <- root_dirs[dir.exists(root_dirs)]
-
-  # --------------------------------------------------
+  root_dirs <- find_roots()
 
   #### ---------- UI ---------- ####
   ui <- miniPage(
 
-    #### ---------- STYLE ---------- ####
     tags$head(
       tags$style(HTML("
                       .mru_btn {
@@ -176,30 +127,25 @@ mrup <- function() {
     miniTabstripPanel(
       between = p('See ', actionLink('help', code('?mrup')), ' for details'),
 
-      #### ---------- Open project ---------- ####
-
+    ####---------- UI TABS ----------####
       miniTabPanel('Open project', icon = icon('folder-open'),
                    miniContentPanel(
                      uiOutput('open_proj_ui')
                    )
       ),
 
-      #### ---------- REMOVE PROJECT TABPANEL ---------- ####
       miniTabPanel('Remove project from list', icon = icon('minus-circle'),
                    miniContentPanel(
                      uiOutput('remove_proj_ui')
                    )
       ),
 
-      #### ---------- ADD PROJECT TABPANEL ---------- ####
-      # See issue #11 - maybe no needed anymore?
       miniTabPanel('Add project to list', icon = icon('plus-circle'),
                    miniContentPanel(
                      uiOutput('add_proj_ui')
                    )
       ),
 
-      #### ---------- RENAME PROJECT TABPANEL---------- ####
       miniTabPanel('Rename project', icon = icon('file-text'),
                    miniContentPanel(
                      uiOutput('rename_proj')
@@ -217,20 +163,6 @@ mrup <- function() {
       cat('\n"MRUP" requires Rstudio to open or search for projects.\n')
       shiny::stopApp()
     }
-
-    current_mru <- reactiveVal({
-      mru_list <- readLines(mru_path)
-      names(mru_list) <- ProjId(mru_list)
-      mru_list
-    })
-
-    #--------------------------------------------------#
-
-    observeEvent(input$help, {
-      # help(topic = 'mrup', package = 'mrup')
-      # do.call(help, list(package = 'mrup', 'mrup'))
-      rstudioapi::previewRd(file.path(find.package('mrup'), 'mrup.Rd'))
-    })
 
     ####---------- OPEN PROJECT UI ----------####
 
@@ -252,7 +184,7 @@ mrup <- function() {
         selectInput(
           'open_proj_choice', 'Projects',
 
-          choices = c('Choose...' = '', proj_no_mru()),
+          choices = c('Choose...' = '', simplified_mru()),
           selectize = TRUE,
           multiple = FALSE,
           width = '100%'),
@@ -290,15 +222,7 @@ mrup <- function() {
       )
     })
 
-    #### ---------- ADD-PROJECT UI ---------- ####
-
-    proj_no_mru <- reactive({
-      # could be conoslidated
-      x <- all_proj()[!all_proj()$project %in% names(current_mru()[1:10]), ]
-
-      paste0(x[['project']], ' (', x[['days_since_mod']], ' days)')
-
-    })
+    ####---------- ADD PROJ UI ----------####
 
     output$add_proj_ui <- renderUI({
       list(
@@ -313,7 +237,7 @@ mrup <- function() {
         selectInput(
           'proj_add_names', 'Projects',
 
-          choices = c('Choose...' = '', proj_no_mru()),
+          choices = c('Choose...' = '', simplified_mru()),
           selectize = TRUE,
           multiple = TRUE,
           width = '100%'),
@@ -324,7 +248,7 @@ mrup <- function() {
       )
     })
 
-    #### ---------- RENAME-PROJECT UI ---------- ####
+    ####---------- RENAME PROJ UI ----------####
 
     output$rename_proj <- renderUI({
 
@@ -354,21 +278,59 @@ mrup <- function() {
     })
 
 
-    #### ---------- CHOOSE SEARCH DIR ---------- ####
+
+    ####---------- REACTIVES ----------####
+
+    current_mru <- reactiveVal({
+      mru_list <- readLines(mru_path)
+      names(mru_list) <- ProjId(mru_list)
+      mru_list
+    })
 
     search_dir <- reactiveValues(path = root_dirs[1])
 
     dir <- reactive(input$dir)
 
+    all_proj <- reactive({
+      compile_proj(all_proj, search_dir$path, input$old_name)
+    })
+
+    simplified_mru <- reactive({
+      simplify_mru(all_proj, current_mru)
+    })
+
+
+    # Add proj choices
+    add_choices <- reactive({
+      choices <- sub('\\s.*$', '', input$proj_add_names)
+
+      all_proj()[all_proj()$project %in% choices, ]
+    })
+
+    ####---------- OUTPUTS ----------####
+
+
+    output$choice_table <- renderTable({
+      if (!is.null(input$proj_add_names)) {
+        tmp_df <- add_choices()
+        tmp_df[['path']] <- dirname(tmp_df[['path']])
+        tmp_df
+      }
+    })
+
+    # Dir choose
     output$dir <- renderText({
       search_dir$path
     })
+
     shinyFiles::shinyDirChoose(
       input,
       'dir',
       roots = root_dirs,
       filetypes = c('Rproj', 'Rmd', 'R')
     )
+
+    ####---------- OBSERVERS ----------####
 
     observeEvent(ignoreNULL = TRUE,
                  eventExpr = {
@@ -389,94 +351,26 @@ mrup <- function() {
                  }
     )
 
-    #### ---------- SEARCH DIR FOR .RPROJ FILES ---------- ####
-
-    all_proj <- reactive({
-
-      # Issue #14
-
-      all_proj <- data.frame(path = dirRecur(search_dir$path),
-                             stringsAsFactors = FALSE)
-
-      if (!nrow(all_proj)) return(NULL)
-
-      all_proj[!all_proj$project %in% input$old_name, ]
-      all_proj$project <- ProjId(all_proj[[1]], 'proj')
-
-      all_proj$last_modified  <- as.Date(file.info(all_proj[[1]])$mtime)
-      all_proj$days_since_mod <- as.integer(Sys.Date() - all_proj$last_modified)
-      all_proj$last_modified  <- format(all_proj$last_modified, '%b %Y')
-
-      all_proj <- all_proj[order(all_proj$days_since_mod), ]
-
-      all_proj[c(2:4, 1)]
-
+    observeEvent(input$help, {
+      rstudioapi::previewRd(system.file('mrup.Rd', package = 'mrup'))
     })
-
-    #### ---------- OPEN PROJECT ---------- ####
 
     observeEvent(input$open_btn, {
-      choice <- sub('\\s.*$', '', input$open_proj_choice)
-      choice <- all_proj()[all_proj()$project == choice, 'path']
-
-      rstudioapi::openProject(choice, input$new_session)
+      choose_proj_to_open(input$open_proj_choice, input$new_session)
     })
-
-    #### ---------- ADD CHOSEN PROJECTS ---------- ####
-
-    add_choices <- reactive({
-      choices <- sub('\\s.*$', '', input$proj_add_names)
-
-      all_proj()[all_proj()$project %in% choices, ]
-    })
-
-    output$choice_table <- renderTable({
-      if (!is.null(input$proj_add_names)) {
-        tmp_df <- add_choices()
-        tmp_df[['path']] <- dirname(tmp_df[['path']])
-        tmp_df
-      }
-
-    })
-
-    #### ---------- UPDATE MRU ---------- ####
 
     observeEvent(input$remove_btn, {
-      current_mru(current_mru()[!current_mru() %in% input$selection])
+      remove_proj_from_mru(input$selection, current_mru)
     })
 
     observeEvent(input$add_btn, {
-      temp_mru <- ProjId(add_choices()$path, 'full')
-      names(temp_mru) <- ProjId(temp_mru, 'proj')
-      current_mru({ c(temp_mru, current_mru()) })
+      add_proj_to_mru(add_choices, current_mru)
     })
-
-    #### ---------- RENAME PROJECT ---------- ####
 
     observeEvent(input$rename_btn, {
-
-      # Rename .Rproj file and dir
-      on <- all_proj()[all_proj()$project == input$old_name, 'path']
-      nn <- gsub(input$old_name, input$new_name, on)
-      file.rename(on, file.path(dirname(on), basename(nn)))  # rename file
-      file.rename(dirname(on), dirname(nn))  # rename dir
-
-      # Update mru
-      temp_mru <- current_mru()
-
-      temp_mru[input$old_name] <- gsub(
-        input$old_name,
-        input$new_name,
-        temp_mru[input$old_name]
-      )
-
-      temp_mru <- ProjId(temp_mru, 'full')
-      names(temp_mru) <- ProjId(temp_mru, 'proj')
-
-      current_mru(temp_mru)
+      rename_proj(all_proj, current_mru,
+                  input$old_name, input$new_name)
     })
-
-    #### ---------- STOP APP AND SAVE CHANGES ---------- ####
 
     observeEvent(input$done, {
       writeLines(current_mru(), mru_path)
@@ -485,9 +379,6 @@ mrup <- function() {
 
   }
 
-  # paneViewer allows use of file tab to navigate folders
   viewer <- paneViewer(minHeight = 'maximize')
-
   runGadget(ui, server, viewer = viewer)
-
 }
