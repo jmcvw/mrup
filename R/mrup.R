@@ -93,10 +93,9 @@ mrup <- function() {
          call. = FALSE)
   }
 
-
-  mru_path <- mru_path_opts[file.exists(mru_path_opts)][1]
-
   # choose path
+  mru_path <- set_mru_path()
+
   if (!length(mru_path))
     stop('File "project_mru" not found')
 
@@ -145,7 +144,9 @@ mrup <- function() {
 
   #### ---------- SERVER ---------- ####
   server <- function(input, output) {#, session) {
-
+    all_proj <- reactive({
+      compile_proj(search_dir$path, input$old_name)
+    })
 
     if (!length(find.package('rstudioapi', quiet = T)) ||
         !rstudioapi::isAvailable()) {
@@ -278,9 +279,7 @@ mrup <- function() {
       mru_list
     })
 
-    all_proj <- reactive({
-      compile_proj(search_dir$path, input$old_name)
-    })
+
 
     simplified_mru <- reactive({
       simplify_mru(all_proj, current_mru)

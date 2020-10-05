@@ -18,7 +18,7 @@ mon_list <- file.path(c('rstudio', 'RStudio-Desktop', '.rstudio-desktop'),
 
 app_loc <- c(file.path("AppData/Local", mon_list[-3]), mon_list[3])
 
-h_roots <- c('~', file.path('C:/Users', Sys.info()['user']))
+h_roots <- c('~', 'C:/Users/%s')
 
 mru_path_opts <- as.vector(sapply(h_roots, file.path, app_loc), 'character')
 

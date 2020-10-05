@@ -33,6 +33,15 @@ dirRecur <- function(search.dir, ext = '\\.Rproj$',
 
 }
 
+#' @return
+#' @export
+#' @keywords internal
+#'
+set_mru_path <- function(user = Sys.info()['user']) {
+  mru_paths <- sprintf(mru_path_opts, user)
+  mru_paths[file.exists(mru_paths)][1]
+}
+
 
 #' @export
 #' @keywords internal
@@ -81,7 +90,6 @@ choose_proj_to_open <- function(d, choice, open_new) {
 #'
 #' Compile a dataframe of projects contained within the chosen search directory
 #'
-#' @param proj_list
 #' @param search_path
 #' @param input
 #'
