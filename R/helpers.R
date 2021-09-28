@@ -5,7 +5,6 @@ ProjId <- function(path, value = 'proj') {
   switch(value,
          full = sub('^.+/Documents', '~', path),
          proj = sub('\\.Rproj$', '', basename(path)),
-         dir  = sub('^.+/Documents', '~', dirname(path))
   )
 }
 
@@ -13,15 +12,15 @@ ProjId <- function(path, value = 'proj') {
 #' @export
 #' @keywords internal
 #'
-dirRecur <- function(search.dir, ext = '\\.Rproj$',
+dirRecur <- function(search_dir, ext = '\\.Rproj$',
                      excl = excl_dirs) {
 
-  dirs <- list.dirs(search.dir, full.names = TRUE, recursive = FALSE)
+  dirs <- list.dirs(search_dir, full.names = TRUE, recursive = FALSE)
 
   if (!missing(excl))
     dirs <- dirs[!grepl(excl, dirs)]
 
-  files  <- dir(search.dir, patt = ext, full.names = TRUE)
+  files  <- dir(search_dir, patt = ext, full.names = TRUE)
 
   if (!length(dirs) && !length(files ))
     return()

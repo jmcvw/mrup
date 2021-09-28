@@ -134,7 +134,7 @@ mrup <- function() {
                    )
       ),
 
-      miniTabPanel('Rename project', icon = icon('file-text'),
+      miniTabPanel('Rename project', icon = icon('file-alt'),
                    miniContentPanel(
                      uiOutput('rename_proj')
                    )
@@ -164,8 +164,8 @@ mrup <- function() {
 
         strong('Current search directory. '),
         p('The selected directory will also be used for finding projects to rename or add to the MRU list'),
-        shinyFiles::shinyDirLink('dir', '(Change?)', 'Browse...'),
-        verbatimTextOutput('dir'),
+        shinyFiles::shinyDirLink('in_dir', '(Change?)', 'Browse...'),
+        verbatimTextOutput('out_dir'),
 
         strong('Open a project, not currently on the "Recently used" list, to open'),
 
@@ -183,8 +183,7 @@ mrup <- function() {
                       'Open in new RStudio session?',
                       value = FALSE),
 
-        actionButton('open_btn', 'Open', class = 'mru_btn')
-      )
+        actionButton('open_btn', 'Open', class = 'mru_btn'))
     })
 
     #### ---------- REMOVE PROJECT UI ---------- ####
@@ -271,7 +270,7 @@ mrup <- function() {
 
     search_dir <- reactiveValues(path = root_dirs[1])
 
-    dir <- reactive(input$dir)
+    in_dir <- reactive(input$in_dir)
 
     current_mru <- reactiveVal({
       mru_list <- readLines(mru_path)
@@ -305,13 +304,13 @@ mrup <- function() {
     })
 
     # Dir choose
-    output$dir <- renderText({
+    output$out_dir <- renderText({
       search_dir$path
     })
 
     shinyFiles::shinyDirChoose(
       input,
-      'dir',
+      'in_dir',
       roots = root_dirs,
       filetypes = c('Rproj', 'Rmd', 'R')
     )
@@ -320,14 +319,14 @@ mrup <- function() {
 
     observeEvent(ignoreNULL = TRUE,
                  eventExpr = {
-                   input$dir
+                   input$in_dir
                  },
                  handlerExpr = {
-                   if (!'path' %in% names(dir())) return()
+                   if (!'path' %in% names(in_dir())) return()
 
                    # <<<<<<< HEAD
                    search_dir$path <- shinyFiles::parseDirPath(root_dirs,
-                                                               input$dir)
+                                                               input$in_dir)
                    # =======
                    #                    root <- root_dirs[dir()$root]
                    #
