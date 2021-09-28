@@ -183,7 +183,9 @@ mrup <- function() {
                       'Open in new RStudio session?',
                       value = FALSE),
 
-        actionButton('open_btn', 'Open', class = 'mru_btn'))
+        actionButton('open_btn', 'Open',
+                     class = 'mru_btn',
+                     icon = icon('folder-open')))
     })
 
     #### ---------- REMOVE PROJECT UI ---------- ####
