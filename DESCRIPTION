@@ -1,7 +1,7 @@
 Package: mrup
 Type: Package
 Title: Manage Most Recently Used Project List
-Version: 0.6.1
+Version: 0.7.0
 Author: John Wilson
 Maintainer: John Wilson <jmcvw@pm.me>
 Description: Add-in for managing the recent projects list. Projects on the list

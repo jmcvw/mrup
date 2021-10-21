@@ -12,11 +12,17 @@ mrup_style <- shiny::tags$head(
                       "))
 )
 
-# Known possible locations of mru file
-mon_list <- file.path(c('rstudio', 'RStudio-Desktop', '.rstudio-desktop'),
-                      "monitored/lists/project_mru")
 
-app_loc <- c(file.path("AppData/Local", mon_list[-3]), mon_list[3])
+#~/.local/share/rstudio/monitored/lists/project_mru
+
+# Known possible locations of mru file
+mon_list <- file.path(c('.rstudio-desktop',
+                        '.local/share/rstudio',
+                        'RStudio-Desktop',
+                        'rstudio'),
+                      'monitored/lists/project_mru')
+
+app_loc <- c(mon_list[1:2], file.path("AppData/Local", mon_list[-(1:2)]))
 
 h_roots <- c('~', 'C:/Users/%s')
 
@@ -31,8 +37,6 @@ root_dirs <- c(`Git repos` = normalizePath('~/R/ProjectDir/git_repos', .Platform
 excl_dirs <- paste0(
   c(dirname(.libPaths()), '\\.git$', '\\.Rproj\\.user$'),
   collapse = '|')
-
-
 
 
 usethis::use_data(mrup_style, mru_path_opts,

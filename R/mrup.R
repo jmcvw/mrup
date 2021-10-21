@@ -326,15 +326,8 @@ mrup <- function() {
                  handlerExpr = {
                    if (!'path' %in% names(in_dir())) return()
 
-                   # <<<<<<< HEAD
                    search_dir$path <- shinyFiles::parseDirPath(root_dirs,
                                                                input$in_dir)
-                   # =======
-                   #                    root <- root_dirs[dir()$root]
-                   #
-                   #                    search_dir$path <-
-                   #                      file.path(root, paste0(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
-                   # >>>>>>> master
                  }
     )
 
