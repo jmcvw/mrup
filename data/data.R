@@ -9,8 +9,7 @@ mrup_style <- shiny::tags$head(
                       #done {
                         background-color: #3cb371;
                       }
-                      "))
-)
+                      ")))
 
 
 #~/.local/share/rstudio/monitored/lists/project_mru
