@@ -7,10 +7,12 @@
 compile_proj(search_path, input)
 }
 \arguments{
-\item{input}{}
+\item{search_path}{Character}
+
+\item{input}{Character; From \code{`input$old_name`}}
 }
 \value{
-
+Dataframe
 }
 \description{
 Compile a dataframe of projects contained within the chosen search directory

@@ -32,7 +32,6 @@ dirRecur <- function(search_dir, ext = '\\.Rproj$',
 
 }
 
-#' @return
 #' @export
 #' @keywords internal
 #'
@@ -57,12 +56,12 @@ find_roots <- function() {
 #' Simplify MRU
 #'
 #' creates mru minus projects that appear on RStudio's drop-down menu could be
-#' conoslidated better - or even removed
+#' conslidated better - or even removed
 #'
-#' @param d
-#' @param mru
+#' @param d Dataframe; Reactive dataframe of all found projects
+#' @param mru Character; Reactive vector of mru prjects
 #'
-#' @return
+#' @return Character vector
 #' @export
 #' @keywords internal
 #'
@@ -73,10 +72,9 @@ simplify_mru <- function(d, mru) {
 }
 
 
-#' @return
 #' @export
+#' @keywords internal
 #'
-#' @examples
 choose_proj_to_open <- function(d, choice, open_new) {
   choice <- sub('\\s.*$', '', choice)
   choice <- d()[d()$project == choice, 'path']
@@ -89,10 +87,10 @@ choose_proj_to_open <- function(d, choice, open_new) {
 #'
 #' Compile a dataframe of projects contained within the chosen search directory
 #'
-#' @param search_path
-#' @param input
+#' @param search_path Character
+#' @param input Character; From \code{`input$old_name`}
 #'
-#' @return
+#' @return Dataframe
 #' @export
 #' @keywords internal
 #'
@@ -115,7 +113,6 @@ compile_proj <- function(search_path, input) {
 }
 
 
-#' @return
 #' @export
 #' @keywords internal
 #'
@@ -124,7 +121,6 @@ remove_proj_from_mru <- function(remove, mru) {
 }
 
 
-#' @return
 #' @export
 #' @keywords internal
 #'

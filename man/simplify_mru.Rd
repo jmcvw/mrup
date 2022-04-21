@@ -7,13 +7,15 @@
 simplify_mru(d, mru)
 }
 \arguments{
-\item{mru}{}
+\item{d}{Dataframe; Reactive dataframe of all found projects}
+
+\item{mru}{Character; Reactive vector of mru prjects}
 }
 \value{
-
+Character vector
 }
 \description{
 creates mru minus projects that appear on RStudio's drop-down menu could be
-conoslidated better - or even removed
+conslidated better - or even removed
 }
 \keyword{internal}
