@@ -38,7 +38,7 @@ dirRecur <- function(search_dir, ext = '\\.Rproj$',
 #'
 set_mru_path <- function(user = Sys.info()['user']) {
   mru_paths <- sprintf(mru_path_opts, user)
-  mru_paths[file.exists(mru_paths)][1]
+  mru_paths[which.max(file.mtime(mru_paths))]
 }
 
 
