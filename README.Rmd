@@ -38,11 +38,10 @@ Then locate the `mrup` section and click on the description text below
 In the open tab it is possible to open any RStudio project even if it is not on the recently used list.
 
 The directory structure of your computer can be searched and all projects located within the chosen directory are displayed.
-The default search location is `~/R`, but this can be changed by clicking the `Change` link.
+The default search location is `~/R`, but this can be changed by clicking the `Change` link[^1].
 It may take several seconds to complete the search, with the time increasing the closer you get to  the root directory of a hard disk.
-Once completed, a 
+The chosen project can then be opened in either the current session or a new one.
 
-The chosen project can then be opened in either the current or a new session.
 The chosen directory is also used for the __Add projects__ and __Rename project__ tab.
 
 ![](images/open_projects.PNG)
@@ -64,7 +63,7 @@ Pressing `Cancel` discards changes and closes the app.
 #### Add tab
 
 Adding new projects to the recently used list requires searching all subdirectories for `.Rproj` files.
-The search directory (i.e the circled input) is now chosen ion the __Open project__ tab.
+The search directory (i.e the circled input) is the same directory chosen on the __Open project__ tab.
 A list of all detected projects is displayed that indicates how long it has been since each project was modified. 
 Selected projects are shown in a table that also shows the full path to the project.
 
@@ -87,4 +86,9 @@ As long as the project directory has the same name as the project itself, both s
 The name change is implemented immediately on pressing <code style='background-color:#337ab7; color:white'>Rename</code>, with no need to press <code style='background-color:#3cb371; color:white'>Save&nbsp;changes</code>, and without the ability to cancel.
 To undo a rename, the project can be re-renamed straight away, after refreshing the app.
 
+***
+
 ![](images/rename_projects.PNG)
+
+
+[^1]: Thanks to the [`shinyFiles`](https://github.com/thomasp85/shinyFiles) packages creators, Thomas Lin Pedersen et al.

@@ -12,7 +12,7 @@ Easily rename existing projects without navigating the file system
 manually.
 
 The RStudio menu shows a list of the 10 most recently used projects.
-This is based on the project\_mru file which may contain more than 10
+This is based on the project_mru file which may contain more than 10
 projects (apparently 15 max?).
 
 ### Install
@@ -31,7 +31,7 @@ Then locate the `mrup` section and click on the description text below
 
 ![](images/mrup_menu.PNG)
 
------
+------------------------------------------------------------------------
 
 #### Open tab
 
@@ -41,21 +41,21 @@ not on the recently used list.
 The directory structure of your computer can be searched and all
 projects located within the chosen directory are displayed. The default
 search location is `~/R`, but this can be changed by clicking the
-`Change` link. It may take several seconds to complete the search, with
-the time increasing the closer you get to the root directory of a hard
-disk. Once completed, a
+`Change` link[^1]. It may take several seconds to complete the search,
+with the time increasing the closer you get to the root directory of a
+hard disk. The chosen project can then be opened in either the current
+session or a new one.
 
-The chosen project can then be opened in either the current or a new
-session. The chosen directory is also used for the **Add projects** and
-**Rename project** tab.
+The chosen directory is also used for the **Add projects** and **Rename
+project** tab.
 
 ![](images/open_projects.PNG)
 
------
+------------------------------------------------------------------------
 
 #### Remove tab
 
-The remove tab lists the contents of the current project\_mru file, in
+The remove tab lists the contents of the current project_mru file, in
 its entirety. The means it is possible to see which projects were
 recently pushed off the bottom, but are still present, on the list. Any
 file on the list came be completely removed from it on this tab.
@@ -74,10 +74,10 @@ app.
 
 Adding new projects to the recently used list requires searching all
 subdirectories for `.Rproj` files. The search directory (i.e the circled
-input) is now chosen ion the **Open project** tab. A list of all
-detected projects is displayed that indicates how long it has been since
-each project was modified. Selected projects are shown in a table that
-also shows the full path to the project.
+input) is the same directory chosen on the **Open project** tab. A list
+of all detected projects is displayed that indicates how long it has
+been since each project was modified. Selected projects are shown in a
+table that also shows the full path to the project.
 
 Pressing the
 <code style='background-color:#337ab7; color:white'>Add</code> button
@@ -85,13 +85,13 @@ creates a list with all selected projects placed at the top of the
 project list. Additions only occur if the
 <code style='background-color:#3cb371; color:white'>Save changes</code>
 button is pressed. Since the list can only show 10 projects, those
-further down will be hidden, but will stay on the project\_mru file (for
+further down will be hidden, but will stay on the project_mru file (for
 a while at least). Pressing `Cancel` discards changes and closes the
 app.
 
 ![](images/add_projects.PNG)
 
------
+------------------------------------------------------------------------
 
 #### Rename tab
 
@@ -110,4 +110,10 @@ no need to press
 and without the ability to cancel. To undo a rename, the project can be
 re-renamed straight away, after refreshing the app.
 
+------------------------------------------------------------------------
+
 ![](images/rename_projects.PNG)
+
+[^1]: Thanks to the
+    [`shinyFiles`](https://github.com/thomasp85/shinyFiles) packages
+    creators, Thomas Lin Pedersen et al.
