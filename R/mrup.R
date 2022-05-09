@@ -313,6 +313,7 @@ mrup <- function() {
     shinyFiles::shinyDirChoose(
       input,
       'in_dir',
+      # defaultRoot = root_dirs[[1]],
       roots = root_dirs,
       filetypes = c('Rproj', 'Rmd', 'R')
     )
