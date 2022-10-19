@@ -122,19 +122,19 @@ mrup <- function() {
                    )
       ),
 
-      miniTabPanel('Remove project from list', icon = icon('minus-circle'),
+      miniTabPanel('Remove project from list', icon = icon('circle-minus'),
                    miniContentPanel(
                      uiOutput('remove_proj_ui')
                    )
       ),
 
-      miniTabPanel('Add project to list', icon = icon('plus-circle'),
+      miniTabPanel('Add project to list', icon = icon('circle-plus'),
                    miniContentPanel(
                      uiOutput('add_proj_ui')
                    )
       ),
 
-      miniTabPanel('Rename project', icon = icon('file-alt'),
+      miniTabPanel('Rename project', icon = icon('file-lines'),
                    miniContentPanel(
                      uiOutput('rename_proj')
                    )
@@ -313,6 +313,7 @@ mrup <- function() {
     shinyFiles::shinyDirChoose(
       input,
       'in_dir',
+      # defaultRoot = root_dirs[[1]],
       roots = root_dirs,
       filetypes = c('Rproj', 'Rmd', 'R')
     )

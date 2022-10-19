@@ -56,7 +56,7 @@ find_roots <- function() {
 #' Simplify MRU
 #'
 #' creates mru minus projects that appear on RStudio's drop-down menu could be
-#' conslidated better - or even removed
+#' consolidated better - or even removed
 #'
 #' @param d Dataframe; Reactive dataframe of all found projects
 #' @param mru Character; Reactive vector of mru prjects
@@ -68,7 +68,7 @@ find_roots <- function() {
 simplify_mru <- function(d, mru) {
   x <- d()[!d()$project %in% names(mru()[1:10]), ]
 
-  paste0(x[['project']], ' (', x[['days_since_mod']], ' days)')
+  paste0(x[['project']], if (length(x)) {paste(' (', x[['days_since_mod']], ' days)')})
 }
 
 
@@ -98,7 +98,7 @@ compile_proj <- function(search_path, input) {
   proj_list <- data.frame(path = dirRecur(search_path),
                           stringsAsFactors = FALSE)
 
-  if (!nrow(proj_list)) return(NULL)
+  if (!nrow(proj_list)) return(data.frame())
 
   proj_list[!proj_list$project %in% input, ]
   proj_list$project <- ProjId(proj_list[[1]], 'proj')

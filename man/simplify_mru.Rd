@@ -16,6 +16,6 @@ Character vector
 }
 \description{
 creates mru minus projects that appear on RStudio's drop-down menu could be
-conslidated better - or even removed
+consolidated better - or even removed
 }
 \keyword{internal}

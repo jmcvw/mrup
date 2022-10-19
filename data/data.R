@@ -9,6 +9,9 @@ mrup_style <- shiny::tags$head(
                       #done {
                         background-color: #3cb371;
                       }
+                      input[type=checkbox] {
+                        transform: scale(1.6);
+                      }
                       ")))
 
 
@@ -25,12 +28,16 @@ app_loc <- c(mon_list[1:2], file.path("AppData/Local", mon_list[-(1:2)]))
 
 h_roots <- c('~', 'C:/Users/%s')
 
-mru_path_opts <- as.vector(sapply(h_roots, file.path, app_loc), 'character')
+mru_path_opts <- unlist(lapply(h_roots, file.path, app_loc))
 
 # Set root dirs
-root_dirs <- c(`Git repos` = normalizePath('~/R/ProjectDir/git_repos', .Platform$file.sep),
-               `~/R` = normalizePath('~/R', .Platform$file.sep),
-               Home  = normalizePath('~', .Platform$file.sep))
+# Path 1 only on Windows and only for me
+# don't update data on Mac, at least not till I've looked into how to stop overwriting
+root_dirs <- c(`Git repos` = normalizePath('~/R/ProjectDir/git_repos'),
+               `Documents` = normalizePath('~/Documents', '/'),
+               `~/R` = normalizePath('~/R', '/'),
+               Home  = normalizePath('~', '/'))
+
 
 # Dirs to exclude from search
 excl_dirs <- paste0(
